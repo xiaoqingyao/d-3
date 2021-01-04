@@ -19,6 +19,11 @@ namespace D_3.Models.Business
         /// </summary>
         public List<ClassroomDateRange> OccupiedRanges { get; set; } = new List<ClassroomDateRange>();
 
+        /// <summary>
+        /// 教室的排序依据
+        /// </summary>
+        public EClassroomSortType SortType = EClassroomSortType.TeachTypeContain;
+
         public class ClassroomDateRange
         {
             public ClassroomDateRange(DateTime df, DateTime dt)
@@ -29,26 +34,39 @@ namespace D_3.Models.Business
             public DateTime dtFrom { get; }
             public DateTime dtTo { get; }
         }
+        /// <summary>
+        /// 排课入教室验证
+        /// </summary>
+        /// <param name="courseArrangement"></param>
+        /// <returns></returns>
         private bool isMatch(CourseArrangement courseArrangement)
         {
             if (OccupiedRanges.Count == 0)
             {
                 return true;
             }
+
+            //专属教室验证
+            if (this.IsExclusive && this.ExclusiveTeacherId != courseArrangement.TeacherId)
+            {
+                return false;
+            }
+
+            //时间段重叠验证
             var startTime = courseArrangement.StartTime;
             var endTime = courseArrangement.EndTime;
 
-            //TimeSpan tsStart = new TimeSpan(startTime.Ticks);
-            //TimeSpan tsEnd = new TimeSpan(endTime.Ticks);
-            //TimeSpan ts = tsEnd.Subtract(tsStart).Duration();
-
-            var isMatch = OccupiedRanges.Where(p => (startTime >= p.dtFrom && endTime <= p.dtTo)
+            var isMatch = OccupiedRanges.Where(p => (startTime <= p.dtFrom && endTime >= p.dtFrom)
                                                 || (startTime >= p.dtFrom && endTime <= p.dtTo)
-                                                || (startTime >= p.dtFrom && endTime >= p.dtTo)
+                                                || (startTime <= p.dtTo && endTime >= p.dtTo)
                                                 ).Count() == 0;
-
             return isMatch;
         }
+        /// <summary>
+        /// 增加教室占用
+        /// </summary>
+        /// <param name="courseArrangement"></param>
+        /// <returns></returns>
         public bool AddCourseArrangement(CourseArrangement courseArrangement)
         {
             var isMatch = this.isMatch(courseArrangement);

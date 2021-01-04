@@ -23,7 +23,7 @@ namespace D_3.Core
         /// 排序优先级后的排课记录
         /// </summary>
         private SortedList<int, CourseArrangement> _sortedCourseArrangement { get; set; } = new SortedList<int, CourseArrangement>();
-        
+
 
         public CourseArranger()
         { }
@@ -56,13 +56,16 @@ namespace D_3.Core
                 //是否是连续
                 bool isSerial = false;
                 var compareList = courseArrangementEntities.Where(p => p.TeacherId == entity.TeacherId && p.SchoolId == entity.SchoolId && p.SpaceId == entity.SpaceId);
-                foreach (var compare in compareList)
+                if (isStandard)
                 {
-                    var (serial, isFront) = RoleReferee.IsSerial(entity.StartTime, entity.EndTime, compare.StartTime, compare.EndTime);
-                    if (serial)
+                    foreach (var compare in compareList)
                     {
-                        isSerial = true;
-                        break;
+                        var (serial, isFront) = RoleReferee.IsSerial(entity.StartTime, entity.EndTime, compare.StartTime, compare.EndTime);
+                        if (serial)
+                        {
+                            isSerial = true;
+                            break;
+                        }
                     }
                 }
                 var courseArrangement = buildCourseArrangement(entity, isSerial, isStandard);
@@ -84,16 +87,16 @@ namespace D_3.Core
             var notSerialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.Normal || p.CourseArrangementType == Models.ECourseArrangementType.Standard);
             _courseArrangement = _courseArrangement.Concat(notSerialArrangements.ToList()).ToList();
 
-            var serialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.Serial || p.CourseArrangementType == Models.ECourseArrangementType.SerialStandard).OrderBy(p => p.StartTime);
+            var serialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.SerialStandard).OrderBy(p => p.StartTime);
             //正序找每个课程的下一节课
             foreach (var arrangement in serialArrangements)
             {
-                if (mergedCourseArrangementSerialIds.Contains(arrangement.CourseId))
+                if (mergedCourseArrangementSerialIds.Contains(arrangement.GId))
                 {
                     continue;
                 }
                 CourseArrangementSerial serialarrangement = (CourseArrangementSerial)arrangement;
-                var compareList = serialArrangements.Where(p => p.TeacherId == arrangement.TeacherId && p.SchoolId == arrangement.SchoolId && p.SpaceId == arrangement.SpaceId);
+                var compareList = serialArrangements.Where(p => p.TeacherId == arrangement.TeacherId && p.SchoolId == arrangement.SchoolId && p.SpaceId == arrangement.SpaceId && !mergedCourseArrangementSerialIds.Contains(p.GId));
                 getNextSerialCourse(serialarrangement, serialarrangement, compareList);
                 _courseArrangement.Add(serialarrangement);
             }
@@ -115,19 +118,21 @@ namespace D_3.Core
                     for (int i = 0; i < arrangementSerial.SerialLevel; i++)
                     {
                         _sortedCourseArrangement.Add(keyIndex, arrangementSerial);
-                        arrangementSerial = arrangementSerial.Next;
+                        if (arrangementSerial.Next != null)
+                        {
+                            arrangementSerial = arrangementSerial.Next;
+                        }
                     }
                 }
-                _sortedCourseArrangement.Add(keyIndex, arrangement);
+                else
+                {
+                    _sortedCourseArrangement.Add(keyIndex, arrangement);
+                }
                 keyIndex++;
             }
         }
 
-        private void ArrangeClassRoom() { 
-            
-        }
-
-        List<string> mergedCourseArrangementSerialIds = new List<string>();//记录已经处理过的连课id
+        List<Guid> mergedCourseArrangementSerialIds = new List<Guid>();//记录已经处理过的连课id
         /// <summary>
         /// 获取下一个连课
         /// </summary>
@@ -136,40 +141,49 @@ namespace D_3.Core
         /// <param name="compareList">课程对照列表</param>
         private void getNextSerialCourse(CourseArrangementSerial root, CourseArrangementSerial arrangement, IEnumerable<CourseArrangement> compareList)
         {
-            mergedCourseArrangementSerialIds.Add(arrangement.CourseId);
-
             foreach (var compare in compareList)
             {
                 var (isSerial, isCurrentFront) = RoleReferee.IsSerial(arrangement.StartTime, arrangement.EndTime, compare.StartTime, compare.EndTime);
-                if (isCurrentFront)
+                if (isSerial && isCurrentFront)
                 {
                     var nextCourseArrangement = (CourseArrangementSerial)compare;
-                    mergedCourseArrangementSerialIds.Add(nextCourseArrangement.CourseId);
+                    mergedCourseArrangementSerialIds.Add(nextCourseArrangement.GId);
                     arrangement.Next = nextCourseArrangement;
                     getNextSerialCourse(root, nextCourseArrangement, compareList);
                     root.SerialLevel++;
                 }
                 else
                 {
-                    root.EarliestMergeDate = arrangement.EarliestMergeDate< root.EarliestMergeDate? arrangement.EarliestMergeDate: root.EarliestMergeDate;
+                    root.EarliestMergeDate = arrangement.EarliestMergeDate < root.EarliestMergeDate ? arrangement.EarliestMergeDate : root.EarliestMergeDate;
                 }
             }
         }
+
+        /// <summary>
+        /// build排课业务对象
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="isSerial"></param>
+        /// <param name="isStandard"></param>
+        /// <returns></returns>
         private CourseArrangement buildCourseArrangement(CourseArrangementEntity entity, bool isSerial, bool isStandard)
         {
-            CourseArrangement arrangement = new CourseArrangement();
-            if (isSerial)
+            CourseArrangement arrangement = AutoMapperConfig.Mapper.Map<CourseArrangement>(entity);
+
+            if (isSerial && isStandard)
             {
                 arrangement = AutoMapperConfig.Mapper.Map<CourseArrangementSerial>(entity);
-                arrangement.CourseArrangementType = isStandard ? Models.ECourseArrangementType.SerialStandard : Models.ECourseArrangementType.Serial;
+                arrangement.CourseArrangementType = Models.ECourseArrangementType.SerialStandard;
+            }
+            else if (isStandard)
+            {
+                arrangement.CourseArrangementType = Models.ECourseArrangementType.Standard;
             }
             else
             {
-                arrangement = AutoMapperConfig.Mapper.Map<CourseArrangement>(entity);
-                arrangement.CourseArrangementType = isStandard ? Models.ECourseArrangementType.Standard : Models.ECourseArrangementType.Normal;
+                arrangement.CourseArrangementType = Models.ECourseArrangementType.Normal;
             }
             return arrangement;
         }
-        
     }
 }

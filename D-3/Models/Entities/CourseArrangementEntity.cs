@@ -34,7 +34,7 @@ namespace D_3.Models.Entities
         /// </summary>
         public DateTime EndTime { get; set; }
         /// <summary>
-        /// 上课类型
+        /// 授课类型
         /// </summary>
         public ETeachType TeachType { get; set; }
 

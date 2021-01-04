@@ -15,52 +15,60 @@ namespace D_3.RoleManager
         public static DateDescriptionModel[] Standards = new DateDescriptionModel[] {
             new DateDescriptionModel(){
               IsHoliday=true,
+              IsMorning=true,
                dateFrom=new RoleDate(){ Hour=8, Minute=0, Second=0 },
                dateTo=new RoleDate(){ Hour=10, Minute=0, Second=0 }
             },
             new DateDescriptionModel(){
               IsHoliday=true,
+              IsMorning=true,
                dateFrom=new RoleDate(){ Hour=10, Minute=0, Second=0 },
                dateTo=new RoleDate(){ Hour=12, Minute=0, Second=0 }
             },
             new DateDescriptionModel(){
               IsHoliday=true,
+              IsMorning=false,
                dateFrom=new RoleDate(){ Hour=13, Minute=0, Second=0 },
                dateTo=new RoleDate(){ Hour=15, Minute=0, Second=0 }
             }
             ,
             new DateDescriptionModel(){
-              IsHoliday=true,
+              IsHoliday=true,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=15, Minute=0, Second=0 },
                dateTo=new RoleDate(){ Hour=17, Minute=0, Second=0 }
             }
             ,
             new DateDescriptionModel(){
-              IsHoliday=true,
+              IsHoliday=true,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=17, Minute=0, Second=0 },
                dateTo=new RoleDate(){ Hour=19, Minute=0, Second=0 }
+            } ,
+            new DateDescriptionModel(){
+              IsHoliday=true,IsMorning=false,
+               dateFrom=new RoleDate(){ Hour=19, Minute=0, Second=0 },
+               dateTo=new RoleDate(){ Hour=20, Minute=30, Second=0 }
             }
             ,
             new DateDescriptionModel(){
-              IsHoliday=false,
+              IsHoliday=false,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=16, Minute=30, Second=0 },
                dateTo=new RoleDate(){ Hour=18, Minute=30, Second=0 }
             },
             new DateDescriptionModel(){
-              IsHoliday=false,
+              IsHoliday=false,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=18, Minute=30, Second=0 },
                dateTo=new RoleDate(){ Hour=20, Minute=30, Second=0 }
             }
             ,
             new DateDescriptionModel(){
-              IsHoliday=false,
+              IsHoliday=false,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=16, Minute=0, Second=0 },
-               dateTo=new RoleDate(){ Hour=18, Minute=30, Second=0 }
+               dateTo=new RoleDate(){ Hour=18, Minute=0, Second=0 }
             },
             new DateDescriptionModel(){
-              IsHoliday=false,
+              IsHoliday=false,IsMorning=false,
                dateFrom=new RoleDate(){ Hour=18, Minute=0, Second=0 },
-               dateTo=new RoleDate(){ Hour=20, Minute=30, Second=0 }
+               dateTo=new RoleDate(){ Hour=20, Minute=0, Second=0 }
             }
         };
 
@@ -107,6 +115,7 @@ namespace D_3.RoleManager
         {
             DateDescriptionModel model2 = (DateDescriptionModel)obj;
             return this.IsHoliday = model2.IsHoliday
+                && this.IsMorning == model2.IsMorning
                 && model2.dateFrom.Hour == this.dateFrom.Hour
                 && model2.dateFrom.Minute == this.dateFrom.Minute
                 && model2.dateFrom.Second == this.dateFrom.Second

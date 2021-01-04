@@ -7,7 +7,7 @@ namespace D_3.Models.Entities
     /// <summary>
     /// 教室配置信息
     /// </summary>
-    public class ClassroomEntity: BaseEntity
+    public class ClassroomEntity : BaseEntity
     {
         public string ClassroomId { get; set; }
         /// <summary>
@@ -30,5 +30,17 @@ namespace D_3.Models.Entities
         /// 可教学范围
         /// </summary>
         public ETeachType[] TeachRange { get; set; }
+        /// <summary>
+        /// 是否是专属教室
+        /// </summary>
+        public bool IsExclusive { get; set; }
+        /// <summary>
+        /// 所属老师
+        /// </summary>
+        public string ExclusiveTeacherId { get; set; }
+        /// <summary>
+        /// 是否优先
+        /// </summary>
+        public bool IsTop { get; set; }
     }
 }

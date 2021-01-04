@@ -28,5 +28,20 @@ namespace D_3.Models.Business
         /// </summary>
         public DateTime EarliestMergeDate { get; set; }
 
+
+        public bool IsSiblings(CourseArrangement targetCourseArrangement)
+        {
+            if (this == targetCourseArrangement)
+            {
+                return true;
+            }
+            if (targetCourseArrangement == null)
+            {
+                return false;
+            }
+            //todo
+            return true;
+        }
+
     }
 }

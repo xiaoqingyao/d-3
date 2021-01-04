@@ -9,7 +9,7 @@ namespace D_3.Models.Entities
         /// <summary>
         /// ID
         /// </summary>
-        public Guid GId { get; set; }
+        public Guid GId { get; set; } = Guid.NewGuid();
         public int EId { get; set; }
         //public DateTime CreateDate { get; set; }
         //public DateTime UpdateDate { get; set; }

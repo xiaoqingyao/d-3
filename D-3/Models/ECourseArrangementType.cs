@@ -16,14 +16,14 @@ namespace D_3.Models
         /// <summary>
         /// 连续的排课 2
         /// </summary>
-        Serial = Normal << 1,
+        //Serial = Normal << 1,
         /// <summary>
         /// 标准时段  4
         /// </summary>
-        Standard = Serial << 1,
+        Standard = Normal << 1,
         /// <summary>
         /// 连标   8
         /// </summary>
-        SerialStandard = Serial | Standard
+        SerialStandard =  Standard<<1
     }
 }

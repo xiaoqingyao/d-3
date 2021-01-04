@@ -60,17 +60,17 @@ namespace D_3.Core
                     );
                 }
             }
-          
+
             //开始分配教室
             List<CourseArrangement> courseTobeDone = new List<CourseArrangement>();//待定表
 
             foreach (var courseArrangementKv in _sortedCourseArrangement)
             {
                 var courseArrangement = courseArrangementKv.Value;
-                var classrooms = _classrooms.Where(p => p.SchoolId == courseArrangement.SchoolId && p.SpaceId == courseArrangement.SpaceId);
 
+                var sortedClassrooms = sortClassRooms(courseArrangement);
                 bool isSuccess = false;
-                foreach (var classroom in classrooms)
+                foreach (var classroom in sortedClassrooms)
                 {
                     isSuccess = classroom.AddCourseArrangement(courseArrangement);
                     if (isSuccess)
@@ -110,5 +110,42 @@ namespace D_3.Core
             return (classroomArrangements, courseTobeDone);
         }
 
+        /// <summary>
+        /// 根据排课数据确定教室优先级
+        /// </summary>
+        /// <param name="courseArrangement"></param>
+        /// <returns></returns>
+        public List<Classroom> sortClassRooms(CourseArrangement courseArrangement)
+        {
+            if (_classrooms == null || _classrooms.Count == 0)
+            {
+                return null;
+            }
+            var classrooms = _classrooms.Where(p => p.SchoolId == courseArrangement.SchoolId && p.SpaceId == courseArrangement.SpaceId && p.TeachRange.Contains(courseArrangement.TeachType));
+            foreach (var classroom in classrooms)
+            {
+                if (classroom.IsExclusive)
+                {
+                    classroom.SortType = Models.EClassroomSortType.Exclusive;
+                }
+                else if (classroom.TeachRange.Count() == 0)
+                {
+                    classroom.SortType = Models.EClassroomSortType.TeachTypeEqual;
+                }
+                else if (classroom.OccupiedCourseArrangement.Contains(courseArrangement))
+                {
+                    classroom.SortType = Models.EClassroomSortType.HasSiblingsCourse;
+                }
+                else if (classroom.IsTop)
+                {
+                    classroom.SortType = Models.EClassroomSortType.IsTop;
+                }
+                else
+                {
+                    classroom.SortType = Models.EClassroomSortType.TeachTypeContain;
+                }
+            }
+            return classrooms.OrderBy(p => p.SortType).ToList();
+        }
     }
 }

@@ -18,8 +18,10 @@ namespace D_3.RoleManager
         public static bool IsStandard(DateTime dtFrom, DateTime dtTo)
         {
             var isH = isHoliday(dtFrom.Year, dtFrom.Month, dtFrom.Day);
+            var ismorning = isMorning(dtFrom);
             var RoleDt = new DateDescriptionModel()
             {
+                IsMorning = ismorning,
                 IsHoliday = isH,
                 dateFrom = new RoleDate()
                 {
@@ -58,7 +60,7 @@ namespace D_3.RoleManager
                 TimeSpan tsDt1 = new TimeSpan(dtTo1.Ticks);
                 TimeSpan tsDf2 = new TimeSpan(dtFrom2.Ticks);
                 TimeSpan ts = tsDt1.Subtract(tsDf2).Duration();
-                if (ts.Minutes == 0)
+                if (ts.TotalMinutes == 0)
                 {
                     boIsSerial = true;
                 }
@@ -69,7 +71,7 @@ namespace D_3.RoleManager
                 TimeSpan tsDt2 = new TimeSpan(dtTo2.Ticks);
                 TimeSpan tsDf1 = new TimeSpan(dtFrom1.Ticks);
                 TimeSpan ts = tsDt2.Subtract(tsDf1).Duration();
-                if (ts.Minutes == 0)
+                if (ts.TotalMinutes == 0)
                 {
                     boIsSerial = true;
                 }
@@ -86,6 +88,10 @@ namespace D_3.RoleManager
         private static bool isHoliday(int year, int month, int day)
         {
             return true;
+        }
+        private static bool isMorning(DateTime dt)
+        {
+            return dt.Hour < 12;
         }
     }
 }
