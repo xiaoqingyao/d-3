@@ -109,7 +109,7 @@ namespace D_3.Core
         {
             int keyIndex = 0;
             var courseList = _courseArrangement.OrderByDescending(p => p.TeachType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
-                (p => p.EarliestMergeDate).ThenByDescending(p => p.OperateDate).ToList();
+                (p => p.EarliestMergeDate).ThenBy(p => p.OperateDate).ToList();
             foreach (var arrangement in courseList)
             {
                 if (arrangement is CourseArrangementSerial)
@@ -144,6 +144,10 @@ namespace D_3.Core
             foreach (var compare in compareList)
             {
                 var (isSerial, isCurrentFront) = RoleReferee.IsSerial(arrangement.StartTime, arrangement.EndTime, compare.StartTime, compare.EndTime);
+                if (isSerial)
+                {
+                    root.EarliestMergeDate = arrangement.EarliestMergeDate < compare.EarliestMergeDate ? arrangement.EarliestMergeDate : compare.EarliestMergeDate;
+                }
                 if (isSerial && isCurrentFront)
                 {
                     var nextCourseArrangement = (CourseArrangementSerial)compare;
@@ -151,10 +155,6 @@ namespace D_3.Core
                     arrangement.Next = nextCourseArrangement;
                     getNextSerialCourse(root, nextCourseArrangement, compareList);
                     root.SerialLevel++;
-                }
-                else
-                {
-                    root.EarliestMergeDate = arrangement.EarliestMergeDate < root.EarliestMergeDate ? arrangement.EarliestMergeDate : root.EarliestMergeDate;
                 }
             }
         }

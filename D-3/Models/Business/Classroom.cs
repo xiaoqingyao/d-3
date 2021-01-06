@@ -41,25 +41,31 @@ namespace D_3.Models.Business
         /// <returns></returns>
         private bool isMatch(CourseArrangement courseArrangement)
         {
-            if (OccupiedRanges.Count == 0)
-            {
-                return true;
-            }
+
 
             //专属教室验证
             if (this.IsExclusive && this.ExclusiveTeacherId != courseArrangement.TeacherId)
             {
                 return false;
             }
-
+            if (OccupiedRanges.Count == 0)
+            {
+                return true;
+            }
             //时间段重叠验证
             var startTime = courseArrangement.StartTime;
             var endTime = courseArrangement.EndTime;
 
-            var isMatch = OccupiedRanges.Where(p => (startTime <= p.dtFrom && endTime >= p.dtFrom)
-                                                || (startTime >= p.dtFrom && endTime <= p.dtTo)
-                                                || (startTime <= p.dtTo && endTime >= p.dtTo)
-                                                ).Count() == 0;
+
+
+            //var isMatch = OccupiedRanges.Where(p =>
+            //                                    (endTime > p.dtFrom && startTime < p.dtTo)
+            //                                    || (startTime <= p.dtFrom && endTime >= p.dtFrom)
+            //                                    || (startTime >= p.dtFrom && endTime <= p.dtTo)
+            //                                    || (startTime <= p.dtTo && endTime >= p.dtTo)
+            //                                    ).Count() == 0;
+            var isMatch = OccupiedRanges.Where(p => (startTime < p.dtTo && endTime > p.dtFrom)).Count() == 0;
+
             return isMatch;
         }
         /// <summary>
@@ -77,6 +83,24 @@ namespace D_3.Models.Business
             this.OccupiedCourseArrangement.Add(courseArrangement);
             this.OccupiedRanges.Add(new ClassroomDateRange(courseArrangement.StartTime, courseArrangement.EndTime));
             return true;
+        }
+
+        /// <summary>
+        /// 当日已有该教师排课
+        /// </summary>
+        /// <returns></returns>
+        public bool HasSiblingCourseThisDay(CourseArrangement courseArrangement)
+        {
+            if (this.OccupiedCourseArrangement == null || this.OccupiedCourseArrangement.Count == 0)
+                return false;
+            foreach (var ocCourse in OccupiedCourseArrangement)
+            {
+                if (ocCourse.TeacherId == courseArrangement.TeacherId)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

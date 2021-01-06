@@ -132,7 +132,7 @@ namespace D_3.Core
                 {
                     classroom.SortType = Models.EClassroomSortType.TeachTypeEqual;
                 }
-                else if (classroom.OccupiedCourseArrangement.Contains(courseArrangement))
+                else if (classroom.HasSiblingCourseThisDay(courseArrangement))
                 {
                     classroom.SortType = Models.EClassroomSortType.HasSiblingsCourse;
                 }

@@ -14,8 +14,10 @@ namespace D_3.RoleManager
         {
             Mapper = new MapperConfiguration(p =>
             {
-                p.CreateMap<CourseArrangementEntity, CourseArrangement>();
-                p.CreateMap<CourseArrangementEntity, CourseArrangementSerial>();
+                p.CreateMap<CourseArrangementEntity, CourseArrangement>()
+                                            .ForMember(t => t.EarliestMergeDate, opt => opt.MapFrom(src => src.OperateDate));
+                p.CreateMap<CourseArrangementEntity, CourseArrangementSerial>()
+                                            .ForMember(t => t.EarliestMergeDate, opt => opt.MapFrom(src => src.OperateDate));
                 p.CreateMap<ClassroomEntity, Classroom>();
 
             }).CreateMapper();
