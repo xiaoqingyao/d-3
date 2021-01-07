@@ -20,6 +20,6 @@ namespace D_3.Models
         /// <summary>
         /// 小组课
         /// </summary>
-        Group=3
+        Group=7
     }
 }

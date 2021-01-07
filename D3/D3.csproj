@@ -35,6 +35,9 @@
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -50,10 +53,13 @@
   <ItemGroup>
     <Compile Include="Arranger\ClassroomArranger.cs" />
     <Compile Include="Arranger\CourseArranger.cs" />
+    <Compile Include="D3Manager.cs" />
+    <Compile Include="DataSource\ClassroomArrangeResultModel.cs" />
     <Compile Include="DataSource\DataManager.cs" />
-    <Compile Include="DataSource\TestDataModel.cs" />
+    <Compile Include="DataSource\ClassroomArrangeParameterModel.cs" />
+    <Compile Include="DB\Conn.cs" />
+    <Compile Include="DB\SQLHelper.cs" />
     <Compile Include="Models\Business\Classroom.cs" />
-    <Compile Include="Models\Business\ClassroomArrangement.cs" />
     <Compile Include="Models\Business\CourseArrangement.cs" />
     <Compile Include="Models\Business\CourseArrangementSerial.cs" />
     <Compile Include="Models\EClassroomSortType.cs" />
@@ -62,6 +68,10 @@
     <Compile Include="Models\Entities\ClassroomArrangementEntity.cs" />
     <Compile Include="Models\Entities\ClassroomEntity.cs" />
     <Compile Include="Models\Entities\CourseArrangementEntity.cs" />
+    <Compile Include="Models\Entities\CourseArrangementQueueEntity.cs" />
+    <Compile Include="Models\Entities\LogSortedClassroomEntity.cs" />
+    <Compile Include="Models\Entities\LogSortedCourseArrangementEntity.cs" />
+    <Compile Include="Models\Entities\TeachingVenue.cs" />
     <Compile Include="Models\ETeachType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleManager\AutoMapperConfig.cs" />

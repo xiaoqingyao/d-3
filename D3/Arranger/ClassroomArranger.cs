@@ -1,6 +1,7 @@
 ﻿using D_3.Models.Business;
 using D_3.Models.Entities;
 using D_3.RoleManager;
+using D3.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,9 +29,9 @@ namespace D_3.Arranger
         /// <summary>
         /// 当期已排课程情况
         /// </summary>
-        private List<ClassroomArrangementEntity> _occupiedClassroomArrangement { get; set; }
+        private IEnumerable<ClassroomArrangementEntity> _occupiedClassroomArrangement { get; set; }
 
-        public ClassroomArranger(DateTime arrangeDate, SortedList<int, CourseArrangement> sortedCourseArrangement, List<ClassroomEntity> classroomEntities, List<ClassroomArrangementEntity> occupiedClassroomArrangement = null)
+        public ClassroomArranger(DateTime arrangeDate, SortedList<int, CourseArrangement> sortedCourseArrangement, IEnumerable<ClassroomEntity> classroomEntities, IEnumerable<ClassroomArrangementEntity> occupiedClassroomArrangement = null)
         {
             this._arrangeDate = arrangeDate;
             this._sortedCourseArrangement = sortedCourseArrangement;
@@ -38,55 +39,69 @@ namespace D_3.Arranger
             _occupiedClassroomArrangement = occupiedClassroomArrangement;
         }
 
-        public List<ClassroomArrangement> Arrange(out List<CourseArrangement> courseTobeDone)
+        public List<ClassroomArrangementEntity> Arrange(out List<CourseArrangementQueueEntity> courseTobeDone, out List<LogSortedClassroomEntity> sortedClassroomEntities)
         {
             //形成教室排课记录表
-            List<ClassroomArrangement> classroomArrangements = new List<ClassroomArrangement>();
-            courseTobeDone = new List<CourseArrangement>();//待定表
+            List<ClassroomArrangementEntity> classroomArrangements = new List<ClassroomArrangementEntity>();
+            courseTobeDone = new List<CourseArrangementQueueEntity>();//待定表
+            sortedClassroomEntities = new List<LogSortedClassroomEntity>();
             if (_classrooms == null || _classrooms.Count == 0 || _sortedCourseArrangement == null || _sortedCourseArrangement.Count == 0)
             {
                 return classroomArrangements;
             }
 
             //初始化当期排课对教室的占用
-            if (_occupiedClassroomArrangement != null && _occupiedClassroomArrangement.Count > 0)
+            if (_occupiedClassroomArrangement != null && _occupiedClassroomArrangement.Count() > 0)
             {
                 foreach (var occupiedArrange in _occupiedClassroomArrangement)
                 {
-                    var classroom = _classrooms.Where(p => p.ClassroomId == occupiedArrange.ClassroomId).FirstOrDefault();
+                    var classroom = _classrooms.Where(p => p.roomId == occupiedArrange.roomId).FirstOrDefault();
                     if (classroom == null)
                     {
                         continue;
                     }
                     classroom.OccupiedRanges.Add(
-                        new Classroom.ClassroomDateRange(occupiedArrange.CourseStartTime, occupiedArrange.CourseEndTime)
+                        new Classroom.ClassroomDateRange(occupiedArrange.dtLessonBeginReal, occupiedArrange.dtLessonEndReal)
                     );
                 }
             }
 
             //开始分配教室
-
-
+            int courseSortIndex = 0;
             foreach (var courseArrangementKv in _sortedCourseArrangement)
             {
                 var courseArrangement = courseArrangementKv.Value;
-
+                //根据课程排序教室
                 var sortedClassrooms = sortClassRooms(courseArrangement);
                 bool isSuccess = false;
+                int sortIndex = 0;
                 foreach (var classroom in sortedClassrooms)
                 {
-                    isSuccess = classroom.AddCourseArrangement(courseArrangement);
-                    if (isSuccess)
+                    sortIndex++;
+                    //记录教室排序和匹配情况
+                    var logSortedClassroomEntity = AutoMapperConfig.Mapper.Map<LogSortedClassroomEntity>(classroom);
+                    string message = string.Empty;
+                    if (!isSuccess)
                     {
-                        break;
+                        //尝试排课入该教室
+                        isSuccess = classroom.AddCourseArrangement(courseArrangement, out message);
                     }
+                    logSortedClassroomEntity.sortIndex = sortIndex;
+                    logSortedClassroomEntity.isSuccess = isSuccess;
+                    logSortedClassroomEntity.courseArrangingId = courseArrangement.courseArrangingId;
+                    logSortedClassroomEntity.message = message;
+                    sortedClassroomEntities.Add(logSortedClassroomEntity);
                 }
                 if (!isSuccess)
                 {
-                    courseTobeDone.Add(courseArrangement);
+                    courseSortIndex++;
+                    var courseArrangementQueue = AutoMapperConfig.Mapper.Map<CourseArrangementQueueEntity>(courseArrangement);
+                    courseArrangementQueue.queueIndex = courseSortIndex;
+                    courseTobeDone.Add(courseArrangementQueue);
                 }
             }
-           
+
+            //生成排班结果
             foreach (var classroom in _classrooms)
             {
                 if (classroom.OccupiedCourseArrangement.Count == 0)
@@ -95,17 +110,16 @@ namespace D_3.Arranger
                 }
                 foreach (var courseAggrangement in classroom.OccupiedCourseArrangement)
                 {
-                    classroomArrangements.Add(new ClassroomArrangement()
+                    classroomArrangements.Add(new ClassroomArrangementEntity()
                     {
-                        ADate = this._arrangeDate,
-                        ClassroomId = classroom.ClassroomId,
-                        CourseArrangingId = courseAggrangement.GId,
-                        CourseStartTime = courseAggrangement.StartTime,
-                        CourseEndTime = courseAggrangement.EndTime,
-                        GId = Guid.NewGuid(),
-                        SchoolId = courseAggrangement.SchoolId,
-                        SpaceId = courseAggrangement.SpaceId,
-                        CourseId = courseAggrangement.CourseId
+                        dtPKDateTime = this._arrangeDate,
+                        roomId = classroom.roomId,
+                        courseArrangingId = courseAggrangement.courseArrangingId,
+                        dtLessonBeginReal = courseAggrangement.dtLessonBeginReal,
+                        dtLessonEndReal = courseAggrangement.dtLessonEndReal,
+                        campusCode = courseAggrangement.onClassCampusCode,
+                        venueId = courseAggrangement.onClassVenueId,
+                        courseId = courseAggrangement.courseArrangingId
                     });
                 }
             }
@@ -123,7 +137,7 @@ namespace D_3.Arranger
             {
                 return null;
             }
-            var classrooms = _classrooms.Where(p => p.SchoolId == courseArrangement.SchoolId && p.SpaceId == courseArrangement.SpaceId && p.TeachRange.Contains(courseArrangement.TeachType));
+            var classrooms = _classrooms.Where(p => p.campusCode == courseArrangement.onClassCampusCode && p.venueId == courseArrangement.onClassVenueId && p.TeachRange.Contains(courseArrangement.teachType));
             foreach (var classroom in classrooms)
             {
                 if (classroom.IsExclusive)
@@ -138,7 +152,7 @@ namespace D_3.Arranger
                 {
                     classroom.SortType = Models.EClassroomSortType.HasSiblingsCourse;
                 }
-                else if (classroom.IsTop)
+                else if (classroom.Priority > 0)
                 {
                     classroom.SortType = Models.EClassroomSortType.IsTop;
                 }

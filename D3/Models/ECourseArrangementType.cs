@@ -10,7 +10,7 @@ namespace D_3.Models
     public enum ECourseArrangementType
     {
         /// <summary>
-        /// 普通排课
+        /// 普通排课 1
         /// </summary>
         Normal = 0x01,
         /// <summary>

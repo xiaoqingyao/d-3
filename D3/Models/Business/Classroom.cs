@@ -39,13 +39,14 @@ namespace D_3.Models.Business
         /// </summary>
         /// <param name="courseArrangement"></param>
         /// <returns></returns>
-        private bool isMatch(CourseArrangement courseArrangement)
+        private bool isMatch(CourseArrangement courseArrangement, out string message)
         {
 
-
+            message = "成功";
             //专属教室验证
-            if (this.IsExclusive && this.ExclusiveTeacherId != courseArrangement.TeacherId)
+            if (this.IsExclusive && this.exclusiveTeacherCode != courseArrangement.sTeacherCode)
             {
+                message = "专属教室不匹配";
                 return false;
             }
             if (OccupiedRanges.Count == 0)
@@ -53,8 +54,8 @@ namespace D_3.Models.Business
                 return true;
             }
             //时间段重叠验证
-            var startTime = courseArrangement.StartTime;
-            var endTime = courseArrangement.EndTime;
+            var startTime = courseArrangement.dtLessonBeginReal;
+            var endTime = courseArrangement.dtLessonEndReal;
 
 
 
@@ -65,7 +66,10 @@ namespace D_3.Models.Business
             //                                    || (startTime <= p.dtTo && endTime >= p.dtTo)
             //                                    ).Count() == 0;
             var isMatch = OccupiedRanges.Where(p => (startTime < p.dtTo && endTime > p.dtFrom)).Count() == 0;
-
+            if (!isMatch)
+            {
+                message = "上课时间段冲突";
+            }
             return isMatch;
         }
         /// <summary>
@@ -73,15 +77,16 @@ namespace D_3.Models.Business
         /// </summary>
         /// <param name="courseArrangement"></param>
         /// <returns></returns>
-        public bool AddCourseArrangement(CourseArrangement courseArrangement)
+        public bool AddCourseArrangement(CourseArrangement courseArrangement, out string message)
         {
-            var isMatch = this.isMatch(courseArrangement);
+            message = string.Empty;
+            var isMatch = this.isMatch(courseArrangement, out message);
             if (!isMatch)
             {
                 return false;
             }
             this.OccupiedCourseArrangement.Add(courseArrangement);
-            this.OccupiedRanges.Add(new ClassroomDateRange(courseArrangement.StartTime, courseArrangement.EndTime));
+            this.OccupiedRanges.Add(new ClassroomDateRange(courseArrangement.dtLessonBeginReal, courseArrangement.dtLessonEndReal));
             return true;
         }
 
@@ -95,7 +100,7 @@ namespace D_3.Models.Business
                 return false;
             foreach (var ocCourse in OccupiedCourseArrangement)
             {
-                if (ocCourse.TeacherId == courseArrangement.TeacherId)
+                if (ocCourse.sTeacherCode == courseArrangement.sTeacherCode)
                 {
                     return true;
                 }

@@ -5,43 +5,42 @@ using System.Text;
 namespace D_3.Models.Entities
 {
     /// <summary>
-    /// 排课结果
+    /// 排课结果（学员课时核录）
     /// </summary>
-    public class CourseArrangementEntity : BaseEntity
+    public class CourseArrangementEntity
     {
         /// <summary>
-        /// 课程id
+        /// 排课课程记录唯一
         /// </summary>
-        public string CourseId { get; set; }
+        public int courseArrangingId { get; set; }
         /// <summary>
         /// 学校
         /// </summary>
-        public string SchoolId { get; set; }
+        public string onClassCampusCode { get; set; }
         /// <summary>
         /// 教学点
         /// </summary>
-        public string SpaceId { get; set; }
+        public string onClassVenueId { get; set; }
         /// <summary>
-        /// 教师id
+        /// 教师id sTeacherCode
         /// </summary>
-        public string TeacherId { get; set; }
+        public string sTeacherCode { get; set; }
         /// <summary>
         /// 开始时间
         /// </summary>
-        public DateTime StartTime { get; set; }
+        public DateTime dtLessonBeginReal { get; set; }
         /// <summary>
         /// 结束时间
         /// </summary>
-        public DateTime EndTime { get; set; }
+        public DateTime dtLessonEndReal { get; set; }
         /// <summary>
         /// 授课类型
         /// </summary>
-        public ETeachType TeachType { get; set; }
-
+        public ETeachType teachType { get; set; }
         /// <summary>
         /// 排课时间
         /// </summary>
-        public DateTime OperateDate { get; set; }
+        public DateTime dtPKDateTime { get; set; }
 
     }
 }

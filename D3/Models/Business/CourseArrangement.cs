@@ -13,7 +13,7 @@ namespace D_3.Models.Business
         public CourseArrangement()
         {
             SerialLevel = 1;
-            EarliestMergeDate = OperateDate;
+            EarliestMergeDate = dtPKDateTime;
         }
         /// <summary>
         /// 排课类型 连标 非连标

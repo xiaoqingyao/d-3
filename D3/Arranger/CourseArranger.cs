@@ -27,7 +27,7 @@ namespace D_3.Arranger
 
         public CourseArranger()
         { }
-        public SortedList<int, CourseArrangement> Arrange(IList<CourseArrangementEntity> courseArrangementEntity)
+        public SortedList<int, CourseArrangement> Arrange(IEnumerable<CourseArrangementEntity> courseArrangementEntity)
         {
             //判定排课的性质
             var arrangements = initData(courseArrangementEntity);
@@ -40,9 +40,9 @@ namespace D_3.Arranger
         /// <summary>
         /// 完成课程类型判定
         /// </summary>
-        private List<CourseArrangement> initData(IList<CourseArrangementEntity> courseArrangementEntities)
+        private List<CourseArrangement> initData(IEnumerable<CourseArrangementEntity> courseArrangementEntities)
         {
-            if (courseArrangementEntities == null || courseArrangementEntities.Count == 0)
+            if (courseArrangementEntities == null || courseArrangementEntities.Count() == 0)
             {
                 return null;
             }
@@ -51,16 +51,16 @@ namespace D_3.Arranger
             foreach (var entity in courseArrangementEntities)
             {
                 //是否是标段
-                var isStandard = RoleReferee.IsStandard(entity.StartTime, entity.EndTime);
+                var isStandard = RoleReferee.IsStandard(entity.dtLessonBeginReal, entity.dtLessonEndReal);
 
                 //是否是连续
                 bool isSerial = false;
-                var compareList = courseArrangementEntities.Where(p => p.TeacherId == entity.TeacherId && p.SchoolId == entity.SchoolId && p.SpaceId == entity.SpaceId);
+                var compareList = courseArrangementEntities.Where(p => p.sTeacherCode == entity.sTeacherCode && p.onClassCampusCode == entity.onClassCampusCode && p.onClassVenueId == entity.onClassVenueId);
                 if (isStandard)
                 {
                     foreach (var compare in compareList)
                     {
-                        var arrSerial = RoleReferee.IsSerial(entity.StartTime, entity.EndTime, compare.StartTime, compare.EndTime);
+                        var arrSerial = RoleReferee.IsSerial(entity.dtLessonBeginReal, entity.dtLessonEndReal, compare.dtLessonBeginReal, compare.dtLessonEndReal);
                         isSerial = arrSerial[0];
                         if (isSerial)
                         {
@@ -87,16 +87,16 @@ namespace D_3.Arranger
             var notSerialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.Normal || p.CourseArrangementType == Models.ECourseArrangementType.Standard);
             _courseArrangement = _courseArrangement.Concat(notSerialArrangements.ToList()).ToList();
 
-            var serialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.SerialStandard).OrderBy(p => p.StartTime);
+            var serialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.SerialStandard).OrderBy(p => p.dtLessonBeginReal);
             //正序找每个课程的下一节课
             foreach (var arrangement in serialArrangements)
             {
-                if (mergedCourseArrangementSerialIds.Contains(arrangement.GId))
+                if (mergedCourseArrangementSerialIds.Contains(arrangement.courseArrangingId))
                 {
                     continue;
                 }
                 CourseArrangementSerial serialarrangement = (CourseArrangementSerial)arrangement;
-                var compareList = serialArrangements.Where(p => p.TeacherId == arrangement.TeacherId && p.SchoolId == arrangement.SchoolId && p.SpaceId == arrangement.SpaceId && !mergedCourseArrangementSerialIds.Contains(p.GId));
+                var compareList = serialArrangements.Where(p => p.sTeacherCode == arrangement.sTeacherCode && p.onClassCampusCode == arrangement.onClassCampusCode && p.onClassVenueId == arrangement.onClassVenueId && !mergedCourseArrangementSerialIds.Contains(p.courseArrangingId));
                 getNextSerialCourse(serialarrangement, serialarrangement, compareList);
                 _courseArrangement.Add(serialarrangement);
             }
@@ -108,8 +108,8 @@ namespace D_3.Arranger
         private void SortCourseArrangements()
         {
             int keyIndex = 0;
-            var courseList = _courseArrangement.OrderByDescending(p => p.TeachType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
-                (p => p.EarliestMergeDate).ThenBy(p => p.OperateDate).ToList();
+            var courseList = _courseArrangement.OrderByDescending(p => p.teachType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
+                (p => p.EarliestMergeDate).ThenBy(p => p.dtPKDateTime).ToList();
             foreach (var arrangement in courseList)
             {
                 if (arrangement is CourseArrangementSerial)
@@ -132,7 +132,7 @@ namespace D_3.Arranger
             }
         }
 
-        List<Guid> mergedCourseArrangementSerialIds = new List<Guid>();//记录已经处理过的连课id
+        List<int> mergedCourseArrangementSerialIds = new List<int>();//记录已经处理过的连课id
         /// <summary>
         /// 获取下一个连课
         /// </summary>
@@ -143,7 +143,7 @@ namespace D_3.Arranger
         {
             foreach (var compare in compareList)
             {
-                var arrSerial = RoleReferee.IsSerial(arrangement.StartTime, arrangement.EndTime, compare.StartTime, compare.EndTime);
+                var arrSerial = RoleReferee.IsSerial(arrangement.dtLessonBeginReal, arrangement.dtLessonEndReal, compare.dtLessonBeginReal, compare.dtLessonEndReal);
                 var isSerial = arrSerial[0];
                 var isCurrentFront = arrSerial[1];
                 if (isSerial)
@@ -153,7 +153,7 @@ namespace D_3.Arranger
                 if (isSerial && isCurrentFront)
                 {
                     var nextCourseArrangement = (CourseArrangementSerial)compare;
-                    mergedCourseArrangementSerialIds.Add(nextCourseArrangement.GId);
+                    mergedCourseArrangementSerialIds.Add(nextCourseArrangement.courseArrangingId);
                     arrangement.Next = nextCourseArrangement;
                     getNextSerialCourse(root, nextCourseArrangement, compareList);
                     root.SerialLevel++;
