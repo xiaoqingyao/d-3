@@ -98,9 +98,9 @@ namespace D_3Tester
             Assert.AreEqual(classroomArrangements.Count, 3);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 0);
 
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 3).FirstOrDefault().courseArrangingId, "YuWen03");
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, "YuWen02");
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, "YuWen01");
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 3).FirstOrDefault().courseArrangingId, 3);
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, 2);
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, 1);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace D_3Tester
             Assert.AreEqual(classroomArrangements.Count, 3);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 0);
 
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, "YuWen03");
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, 3);
             Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).Count(), 2);
         }
 
@@ -246,8 +246,8 @@ namespace D_3Tester
             };
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, "YuWen03");
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, "YuWen01");
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, 3);
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).FirstOrDefault().courseArrangingId, 1);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
         }
 
@@ -299,7 +299,7 @@ namespace D_3Tester
             };
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, "YuWen01");
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, 1);
             Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).Count(), 0);
         }
 
@@ -372,7 +372,7 @@ namespace D_3Tester
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
             Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 2).Count(), 2);
-            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, "YuWen03");
+            Assert.AreEqual(classroomArrangements.Where(p => p.roomId == 1).FirstOrDefault().courseArrangingId, 3);
         }
 
         /// <summary>

@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ClassroomArrangeTest.cs" />
     <Compile Include="CourseArrangeTest.cs" />
+    <Compile Include="D3Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

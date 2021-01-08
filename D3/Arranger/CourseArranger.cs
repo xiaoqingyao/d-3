@@ -88,7 +88,7 @@ namespace D_3.Arranger
             _courseArrangement = _courseArrangement.Concat(notSerialArrangements.ToList()).ToList();
 
             var serialArrangements = arrangements.Where(p => p.CourseArrangementType == Models.ECourseArrangementType.SerialStandard).OrderBy(p => p.dtLessonBeginReal);
-            //正序找每个课程的下一节课
+            //按照上课时间正序找每个课程的下一节课
             foreach (var arrangement in serialArrangements)
             {
                 if (mergedCourseArrangementSerialIds.Contains(arrangement.courseArrangingId))

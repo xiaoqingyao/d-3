@@ -41,15 +41,15 @@ namespace D_3.DataSource
             {
                 //获取规则：教学点启用自动排教室的规则；教室可用
                 string sql = @"
-                                select sStudentCode,nTutorType,dtPKDateTime,dtLessonBeginReal,dtDateReal,sClasscode
-                                    from view_VB_StudentLessonHeLu
+                                select helu.id,sStudentCode,nTutorType,dtPKDateTime,dtLessonBeginReal,dtDateReal,sClasscode,dtLessonEndReal,lessonroom.onClassVenueId,lessonroom.onClassVenueId
+                                    from view_VB_StudentLessonHeLu helu
                                          inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 
                                     where nTutorType=1--授课类型
                                     and nAudit=0--未核录
                                     and nStatus!=3--非缺勤记录
                                     and dtDateReal=@dtDateReal
                                     union all
-                                    select  helu.sStudentCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,helu.sClasscode
+                                    select  helu.id,helu.sStudentCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,helu.sClasscode,dtLessonEndReal,lessonroom.onClassVenueId,lessonroom.onClassVenueId
                                     from view_VB_StudentLessonHeLu helu
 		                                 inner join V_BS_Class cls on helu.sClasscode=cls.sCode and cls.fullClass=1
                                          inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1
