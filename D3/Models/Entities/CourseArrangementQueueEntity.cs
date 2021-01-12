@@ -12,9 +12,7 @@ namespace D3.Models.Entities
     /// </summary>
     public class CourseArrangementQueueEntity : CourseArrangementEntity
     {
-        /// <summary>
-        /// 待定表顺序
-        /// </summary>
-        public int queueIndex { get; set; }
+        public bool isDelete { get; set; }
+        public string deleteReason { get; set; }
     }
 }

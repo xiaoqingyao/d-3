@@ -367,8 +367,8 @@ namespace D_3Tester
             var sortedCourseArrangement = new CourseArranger().Arrange(courseArrangementEntities);
 
             //ÅÐ¶¨
-            Assert.AreEqual(sortedCourseArrangement.Values[0].SerialLevel, 4);
-            Assert.AreEqual(sortedCourseArrangement.Values[1].SerialLevel, 2);
+            Assert.AreEqual(((CourseArrangementSerial)sortedCourseArrangement[0]).SerialLevel, 4);
+            Assert.AreEqual(((CourseArrangementSerial)sortedCourseArrangement[1]).SerialLevel, 2);
         }
 
         /// <summary>

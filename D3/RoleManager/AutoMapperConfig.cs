@@ -22,8 +22,10 @@ namespace D_3.RoleManager
                 p.CreateMap<ClassroomEntity, Classroom>();
                 p.CreateMap<ClassroomEntity, LogSortedClassroomEntity>();
                 p.CreateMap<CourseArrangement, LogSortedCourseArrangementEntity>();
+                p.CreateMap<CourseArrangementEntity, LogSortedCourseArrangementEntity>();
                 p.CreateMap<Classroom, LogSortedClassroomEntity>();
                 p.CreateMap<CourseArrangementEntity, CourseArrangementQueueEntity>();
+                p.CreateMap<CourseArrangement, CourseArrangementEntity>();
             }).CreateMapper();
         }
     }

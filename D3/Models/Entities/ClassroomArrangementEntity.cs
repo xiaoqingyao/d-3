@@ -49,5 +49,19 @@ namespace D_3.Models.Entities
         /// 课程id
         /// </summary>
         public int courseId { get; set; }
+        public bool isDelete { get; set; }
+        public string deleteReason { get; set; }
+        /// <summary>
+        /// 上课年
+        /// </summary>
+        public int dtDateRealYear { get; set; }
+        /// <summary>
+        /// 上课月
+        /// </summary>
+        public int dtDateRealMonth { get; set; }
+        /// <summary>
+        /// 上课日
+        /// </summary>
+        public int dtDateRealDay { get; set; }
     }
 }

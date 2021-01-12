@@ -21,7 +21,7 @@ namespace D_3.Arranger
         /// <summary>
         /// 排课情况
         /// </summary>
-        private SortedList<int, CourseArrangement> _sortedCourseArrangement;
+        private List<CourseArrangementEntity> _sortedCourseArrangement;
         /// <summary>
         /// 可用教室
         /// </summary>
@@ -31,7 +31,7 @@ namespace D_3.Arranger
         /// </summary>
         private IEnumerable<ClassroomArrangementEntity> _occupiedClassroomArrangement { get; set; }
 
-        public ClassroomArranger(DateTime arrangeDate, SortedList<int, CourseArrangement> sortedCourseArrangement, IEnumerable<ClassroomEntity> classroomEntities, IEnumerable<ClassroomArrangementEntity> occupiedClassroomArrangement = null)
+        public ClassroomArranger(DateTime arrangeDate, List<CourseArrangementEntity> sortedCourseArrangement, IEnumerable<ClassroomEntity> classroomEntities, IEnumerable<ClassroomArrangementEntity> occupiedClassroomArrangement = null)
         {
             this._arrangeDate = arrangeDate;
             this._sortedCourseArrangement = sortedCourseArrangement;
@@ -39,11 +39,11 @@ namespace D_3.Arranger
             _occupiedClassroomArrangement = occupiedClassroomArrangement;
         }
 
-        public List<ClassroomArrangementEntity> Arrange(out List<CourseArrangementQueueEntity> courseTobeDone, out List<LogSortedClassroomEntity> sortedClassroomEntities)
+        public List<ClassroomArrangementEntity> Arrange(out List<CourseArrangementQueueEntity> courseQueue, out List<LogSortedClassroomEntity> sortedClassroomEntities)
         {
             //形成教室排课记录表
             List<ClassroomArrangementEntity> classroomArrangements = new List<ClassroomArrangementEntity>();
-            courseTobeDone = new List<CourseArrangementQueueEntity>();//待定表
+            courseQueue = new List<CourseArrangementQueueEntity>();//待定表
             sortedClassroomEntities = new List<LogSortedClassroomEntity>();
             if (_classrooms == null || _classrooms.Count == 0 || _sortedCourseArrangement == null || _sortedCourseArrangement.Count == 0)
             {
@@ -67,10 +67,8 @@ namespace D_3.Arranger
             }
 
             //开始分配教室
-            int courseSortIndex = 0;
-            foreach (var courseArrangementKv in _sortedCourseArrangement)
+            foreach (var courseArrangement in _sortedCourseArrangement)
             {
-                var courseArrangement = courseArrangementKv.Value;
                 //根据课程排序教室
                 var sortedClassrooms = sortClassRooms(courseArrangement);
                 bool isSuccess = false;
@@ -94,10 +92,8 @@ namespace D_3.Arranger
                 }
                 if (!isSuccess)
                 {
-                    courseSortIndex++;
                     var courseArrangementQueue = AutoMapperConfig.Mapper.Map<CourseArrangementQueueEntity>(courseArrangement);
-                    courseArrangementQueue.queueIndex = courseSortIndex;
-                    courseTobeDone.Add(courseArrangementQueue);
+                    courseQueue.Add(courseArrangementQueue);
                 }
             }
 
@@ -119,7 +115,10 @@ namespace D_3.Arranger
                         dtLessonEndReal = courseAggrangement.dtLessonEndReal,
                         campusCode = courseAggrangement.onClassCampusCode,
                         venueId = courseAggrangement.onClassVenueId,
-                        courseId = courseAggrangement.courseArrangingId
+                        courseId = courseAggrangement.courseArrangingId,
+                        dtDateRealYear = courseAggrangement.dtLessonBeginReal.Year,
+                        dtDateRealMonth = courseAggrangement.dtLessonBeginReal.Month,
+                        dtDateRealDay = courseAggrangement.dtLessonBeginReal.Day
                     });
                 }
             }
@@ -131,7 +130,7 @@ namespace D_3.Arranger
         /// </summary>
         /// <param name="courseArrangement"></param>
         /// <returns></returns>
-        public List<Classroom> sortClassRooms(CourseArrangement courseArrangement)
+        public List<Classroom> sortClassRooms(CourseArrangementEntity courseArrangement)
         {
             if (_classrooms == null || _classrooms.Count == 0)
             {

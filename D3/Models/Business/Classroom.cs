@@ -12,7 +12,7 @@ namespace D_3.Models.Business
         /// <summary>
         /// 已占用排课
         /// </summary>
-        public List<CourseArrangement> OccupiedCourseArrangement { get; set; } = new List<CourseArrangement>();
+        public List<CourseArrangementEntity> OccupiedCourseArrangement { get; set; } = new List<CourseArrangementEntity>();
 
         /// <summary>
         /// 已占用的时间段
@@ -39,7 +39,7 @@ namespace D_3.Models.Business
         /// </summary>
         /// <param name="courseArrangement"></param>
         /// <returns></returns>
-        private bool isMatch(CourseArrangement courseArrangement, out string message)
+        private bool isMatch(CourseArrangementEntity courseArrangement, out string message)
         {
 
             message = "成功";
@@ -77,7 +77,7 @@ namespace D_3.Models.Business
         /// </summary>
         /// <param name="courseArrangement"></param>
         /// <returns></returns>
-        public bool AddCourseArrangement(CourseArrangement courseArrangement, out string message)
+        public bool AddCourseArrangement(CourseArrangementEntity courseArrangement, out string message)
         {
             message = string.Empty;
             var isMatch = this.isMatch(courseArrangement, out message);
@@ -94,7 +94,7 @@ namespace D_3.Models.Business
         /// 当日已有该教师排课
         /// </summary>
         /// <returns></returns>
-        public bool HasSiblingCourseThisDay(CourseArrangement courseArrangement)
+        public bool HasSiblingCourseThisDay(CourseArrangementEntity courseArrangement)
         {
             if (this.OccupiedCourseArrangement == null || this.OccupiedCourseArrangement.Count == 0)
                 return false;

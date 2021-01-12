@@ -22,18 +22,18 @@ namespace D_3.Arranger
         /// <summary>
         /// 排序优先级后的排课记录
         /// </summary>
-        private SortedList<int, CourseArrangement> _sortedCourseArrangement { get; set; } = new SortedList<int, CourseArrangement>();
+        private List<CourseArrangementEntity> _sortedCourseArrangement { get; set; } = new List<CourseArrangementEntity>();
 
 
         public CourseArranger()
         { }
-        public SortedList<int, CourseArrangement> Arrange(IEnumerable<CourseArrangementEntity> courseArrangementEntity)
+        public List<CourseArrangementEntity> Arrange(IEnumerable<CourseArrangementEntity> courseArrangementEntity)
         {
             //判定排课的性质
             var arrangements = initData(courseArrangementEntity);
             //合并连续课
             MergeSerialCourseArrangements(arrangements);
-            //根据权限排序
+            //分解合并，形成按优先级的队列
             SortCourseArrangements();
             return _sortedCourseArrangement;
         }
@@ -107,7 +107,7 @@ namespace D_3.Arranger
         /// </summary>
         private void SortCourseArrangements()
         {
-            int keyIndex = 0;
+            //int keyIndex = 0;
             var courseList = _courseArrangement.OrderByDescending(p => p.teachType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
                 (p => p.EarliestMergeDate).ThenBy(p => p.dtPKDateTime).ToList();
             foreach (var arrangement in courseList)
@@ -117,7 +117,7 @@ namespace D_3.Arranger
                     var arrangementSerial = arrangement as CourseArrangementSerial;
                     for (int i = 0; i < arrangementSerial.SerialLevel; i++)
                     {
-                        _sortedCourseArrangement.Add(keyIndex, arrangementSerial);
+                        _sortedCourseArrangement.Add(arrangementSerial);
                         if (arrangementSerial.Next != null)
                         {
                             arrangementSerial = arrangementSerial.Next;
@@ -126,9 +126,9 @@ namespace D_3.Arranger
                 }
                 else
                 {
-                    _sortedCourseArrangement.Add(keyIndex, arrangement);
+                    _sortedCourseArrangement.Add( arrangement);
                 }
-                keyIndex++;
+                //keyIndex++;
             }
         }
 

@@ -20,7 +20,7 @@ namespace D3.DataSource
         /// <param name="classroomArrangements">排班结果</param>
         /// <param name="courseArrangementNeedToDo">待定表</param>
         /// <param name="logSortedClassroomEntities">班级排班记录</param>
-        public ClassroomArrangeResultModel(SortedList<int, CourseArrangement> sortedCourseArrangement, List<ClassroomArrangementEntity> classroomArrangements, List<CourseArrangementQueueEntity> courseArrangementQueue, List<LogSortedClassroomEntity> logSortedClassroomEntities)
+        public ClassroomArrangeResultModel(List<CourseArrangementEntity> sortedCourseArrangement, List<ClassroomArrangementEntity> classroomArrangements, List<CourseArrangementQueueEntity> courseArrangementQueue, List<LogSortedClassroomEntity> logSortedClassroomEntities)
         {
             this.CourseArrangementQueue = courseArrangementQueue;
             this.ClassroomArrangements = classroomArrangements;
@@ -29,10 +29,13 @@ namespace D3.DataSource
             {
                 throw new Exception("课程排序不能为空");
             }
+
+            int sortIndex = 0;
             foreach (var item in sortedCourseArrangement)
             {
-                var sortCourseLog = AutoMapperConfig.Mapper.Map<LogSortedCourseArrangementEntity>(item.Value);
-                sortCourseLog.sortIndex = item.Key;
+                sortIndex++;
+                var sortCourseLog = AutoMapperConfig.Mapper.Map<LogSortedCourseArrangementEntity>(item);
+                sortCourseLog.sortIndex = sortIndex;
                 LogSortedCourseArrangement.Add(sortCourseLog);
             }
         }
