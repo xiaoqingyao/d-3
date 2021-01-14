@@ -118,7 +118,8 @@ namespace D_3.Arranger
                         courseId = courseAggrangement.courseArrangingId,
                         dtDateRealYear = courseAggrangement.dtLessonBeginReal.Year,
                         dtDateRealMonth = courseAggrangement.dtLessonBeginReal.Month,
-                        dtDateRealDay = courseAggrangement.dtLessonBeginReal.Day
+                        dtDateRealDay = courseAggrangement.dtLessonBeginReal.Day,
+                        roomNum = classroom.roomCode
                     });
                 }
             }
@@ -136,14 +137,14 @@ namespace D_3.Arranger
             {
                 return null;
             }
-            var classrooms = _classrooms.Where(p => p.campusCode == courseArrangement.onClassCampusCode && p.venueId == courseArrangement.onClassVenueId && p.TeachRange.Contains(courseArrangement.teachType));
+            var classrooms = _classrooms.Where(p => p.campusCode == courseArrangement.onClassCampusCode && p.venueId == courseArrangement.onClassVenueId && p.TeachRange.Contains(courseArrangement.nTutorType));
             foreach (var classroom in classrooms)
             {
                 if (classroom.IsExclusive)
                 {
                     classroom.SortType = Models.EClassroomSortType.Exclusive;
                 }
-                else if (classroom.TeachRange.Count() == 0)
+                else if (classroom.TeachRange.Count() == 1)
                 {
                     classroom.SortType = Models.EClassroomSortType.TeachTypeEqual;
                 }

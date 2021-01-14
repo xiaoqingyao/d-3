@@ -8,6 +8,8 @@ using D3.DataSource;
 using System.Data.SqlClient;
 using System.Linq;
 using D3.Models.Entities;
+using D_3.Models;
+using System.Threading.Tasks;
 
 namespace D_3.DataSource
 {
@@ -31,11 +33,26 @@ namespace D_3.DataSource
             {
                 sql += " and cr.campusCode=@campusCode";
             }
+            IList<ClassroomEntity> queryRel = null;
             using (var conn = Conn.getConn(Conn.getConnStr()))
             {
                 //获取规则：教学点启用自动排教室的规则；教室可用
-                return conn.Query<ClassroomEntity>(sql, param: new { venueId = venueId, campusCode = campusCode }, commandTimeout: 10);
+                queryRel = conn.Query<ClassroomEntity>(sql, param: new { venueId = venueId, campusCode = campusCode }, commandTimeout: 10).ToList();
             }
+            foreach (var classroom in queryRel)
+            {
+                string[] sTeachRange = classroom.teachingAttributes?.Split(new char[] { ',' });
+                List<ETeachType> lstTeachTypes = new List<ETeachType>();
+                if (sTeachRange != null)
+                {
+                    foreach (var sTeachType in sTeachRange)
+                    {
+                        lstTeachTypes.Add((ETeachType)int.Parse(sTeachType));
+                    }
+                }
+                classroom.TeachRange = lstTeachTypes.ToArray();
+            }
+            return queryRel;
         }
         /// <summary>
         /// 获取排课信息（学员课时核录）
@@ -55,7 +72,7 @@ namespace D_3.DataSource
                 //获取规则说明：教学点启用自动排教室；教室可用
                 //1对1课程
                 string sql1v1 = @"
-                        select helu.id,sStudentCode,nTutorType,dtPKDateTime,dtLessonBeginReal,dtDateReal,sClasscode,dtLessonEndReal,lessonroom.onClassVenueId,lessonroom.onClassVenueId
+                       select  helu.id as courseArrangingId,helu.steacherCode,helu.sStudentCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,helu.sClasscode,dtLessonEndReal,lessonroom.onClassCampusCode,lessonroom.onClassVenueId
                                     from view_VB_StudentLessonHeLu helu
                                          inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 
                                     where nTutorType=1--授课类型
@@ -63,8 +80,9 @@ namespace D_3.DataSource
                                     and nStatus!=3--非缺勤记录
                                     and dtDateReal=@dtDateReal
                     ";
+                //1v2 小组课
                 string sqlv2vGroup = @"
-                                    select  helu.id,helu.sStudentCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,helu.sClasscode,dtLessonEndReal,lessonroom.onClassVenueId,lessonroom.onClassVenueId
+                       select  helu.id as courseArrangingId,helu.steacherCode,helu.sStudentCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,helu.sClasscode,dtLessonEndReal,lessonroom.onClassCampusCode,lessonroom.onClassVenueId
                                     from view_VB_StudentLessonHeLu helu
 		                                 inner join V_BS_Class cls on helu.sClasscode=cls.sCode and cls.fullClass=1
                                          inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1
@@ -113,7 +131,7 @@ namespace D_3.DataSource
             {
                 //获取规则：教学点启用自动排教室的规则；教室可用
                 string sql = @"
-                               select * from  V_BS_D3ClassroomArrangement where isDelete=0 and dtDateReal=@dtDateReal
+                               select * from  V_BS_D3ClassroomArrangement where isDelete=0 and dtDateRealYear=@dtDateRealYear and dtDateRealMonth=@dtDateRealMonth and dtDateRealDay=@dtDateRealDay
                             ";
                 if (!string.IsNullOrEmpty(campusCode))
                 {
@@ -123,7 +141,7 @@ namespace D_3.DataSource
                 {
                     sql += " and venueId=@venueId";
                 }
-                return conn.Query<ClassroomArrangementEntity>(sql, param: new { dtDateReal = $"{year}-{month}-{day}", campusCode = @campusCode, @venueId = @venueId }, commandTimeout: 10);
+                return conn.Query<ClassroomArrangementEntity>(sql, param: new { dtDateRealYear = year, dtDateRealMonth = month, dtDateRealDay = day, campusCode = @campusCode, @venueId = @venueId }, commandTimeout: 10);
             }
         }
 
@@ -131,19 +149,23 @@ namespace D_3.DataSource
         /// 保存D-3 排班数据
         /// </summary>
         /// <param name="d3DbResultModel"></param>
-        public void D3ToDb(ClassroomArrangeResultModel d3DbResultModel)
+        public async Task D3ToDb(ClassroomArrangeResultModel d3DbResultModel)
         {
             using (var conn = Conn.getConn(Conn.getConnStr()))
             {
                 SqlTransaction trans = conn.BeginTransaction();
-                //保存排班结果
-                conn.ExecuteAsync(@"insert into V_BS_D3ClassroomArrangement(
+                try
+                {
+                    //保存排班结果
+                    await conn.ExecuteAsync(@"insert into V_BS_D3ClassroomArrangement(
                         courseArrangingId
                         ,campusCode
                         ,venueId
                         ,roomId
                         ,roomNum
-                        ,dtDateReal
+                        ,dtDateRealYear
+                        ,dtDateRealMonth
+                        ,dtDateRealDay
                         ,dtLessonBeginReal
                         ,dtLessonEndReal
                         ,courseId
@@ -154,37 +176,52 @@ namespace D_3.DataSource
                         ,@venueId
                         ,@roomId
                         ,@roomNum
-                        ,@dtDateReal
+                        ,@dtDateRealYear
+                        ,@dtDateRealMonth
+                        ,@dtDateRealDay
                         ,@dtLessonBeginReal
                         ,@dtLessonEndReal
                         ,@courseId
                         ,0)", param: d3DbResultModel.ClassroomArrangements, transaction: trans);
-                //回写学员课时核录todo
-                //保存待定表  （暂不维护了）
-                //conn.ExecuteAsync(@"insert into [V_BS_D3CourseArrangementQueue](
-                //                   queueIndex
-                //                  ,courseArrangingId
-                //                  ,onClassCampusCode
-                //                  ,onClassVenueId
-                //                  ,dtLessonBeginReal
-                //                  ,dtLessonEndReal
-                //                  ,teachType
-                //                  ,dtPKDateTime
-                //                    ,isDelete)
-                //                    values(
-                //                   @queueIndex
-                //                  ,@courseArrangingId
-                //                  ,@onClassCampusCode
-                //                  ,@onClassVenueId
-                //                  ,@dtLessonBeginReal
-                //                  ,@dtLessonEndReal
-                //                  ,@teachType
-                //                  ,@dtPKDateTime
-                //                    ,0
-                //                    )",
-                //    param: d3DbResultModel.CourseArrangementQueue, transaction: trans);
-                //保存排班日志
-                conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedClassroom](
+                    //回写学员课时核录todo
+                    foreach (var classroomArrangement in d3DbResultModel.ClassroomArrangements)
+                    {
+                        await conn.ExecuteAsync(@"
+                        update V_BS_StudentLessonClassroom 
+                                set assignClassroomStatus=1,
+                                    assignClassroomId=@assignClassroomId
+                                where lessonId=@lessonId
+                        ", param: new { assignClassroomId = classroomArrangement.roomId, lessonId = classroomArrangement.courseArrangingId }, transaction: trans);
+                    }
+                    trans.Commit();
+                    #region 保存待定表  （暂不维护了）
+                    //
+                    //conn.ExecuteAsync(@"insert into [V_BS_D3CourseArrangementQueue](
+                    //                   queueIndex
+                    //                  ,courseArrangingId
+                    //                  ,onClassCampusCode
+                    //                  ,onClassVenueId
+                    //                  ,dtLessonBeginReal
+                    //                  ,dtLessonEndReal
+                    //                  ,teachType
+                    //                  ,dtPKDateTime
+                    //                    ,isDelete)
+                    //                    values(
+                    //                   @queueIndex
+                    //                  ,@courseArrangingId
+                    //                  ,@onClassCampusCode
+                    //                  ,@onClassVenueId
+                    //                  ,@dtLessonBeginReal
+                    //                  ,@dtLessonEndReal
+                    //                  ,@teachType
+                    //                  ,@dtPKDateTime
+                    //                    ,0
+                    //                    )",
+                    //    param: d3DbResultModel.CourseArrangementQueue, transaction: trans);
+
+                    #endregion
+                    //保存排班日志
+                    await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedClassroom](
                                  [courseArrangingId]
                                 ,[isSuccess]
                                 ,[message]
@@ -208,9 +245,9 @@ namespace D_3.DataSource
                                 ,@campusCode
                                 ,@venueId    
                                     )",
-                    param: d3DbResultModel.LogSortedClassroomEntities, transaction: trans);
-                //保存排课日志
-                conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedCourseArrangement](
+                        param: d3DbResultModel.LogSortedClassroomEntities);
+                    //保存排课日志
+                    await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedCourseArrangement](
                                    [CourseArrangementType]
                                   ,[SerialLevel]
                                   ,[EarliestMergeDate]
@@ -226,17 +263,30 @@ namespace D_3.DataSource
                                    @CourseArrangementType
                                   ,@SerialLevel
                                   ,@EarliestMergeDate
-                                  ,@id
+                                  ,@courseArrangingId
                                   ,@onClassCampusCode
                                   ,@onClassVenueId
                                   ,@sTeacherCode
                                   ,@dtLessonBeginReal
                                   ,@dtLessonEndReal
-                                  ,@TeachType
+                                  ,@nTutorType
                                   ,@dtPKDateTime     
                                     )",
-                    param: d3DbResultModel.LogSortedCourseArrangement, transaction: trans);
-                trans.Commit();
+                        param: d3DbResultModel.LogSortedCourseArrangement);
+
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                }
+                finally
+                {
+                    if (conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        conn.Close();
+                    }
+
+                }
             }
         }
 
@@ -255,7 +305,7 @@ namespace D_3.DataSource
             using (var conn = Conn.getConn(Conn.getConnStr()))
             {
                 //获取规则：教学点启用自动排教室的规则；教室可用
-                string sql = "select * from V_BS_D3ClassroomArrangement where isDelete=0 and 1=1";
+                string sql = "select * from V_BS_D3ClassroomArrangement where isDelete=0 ";
                 if (roomId.HasValue)
                 {
                     sql += " and roomId=@roomId";
@@ -293,7 +343,6 @@ namespace D_3.DataSource
                 conn.Execute(sql, transaction: trans, param: new { ids = arrangements.Select(p => p.id).ToArray() }, commandTimeout: 10);
             }
             return arrangements;
-            //todo 如果
         }
 
         /// <summary>

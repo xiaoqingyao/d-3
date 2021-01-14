@@ -16,13 +16,13 @@ namespace D_3Tester
     [TestClass]
     public class CourseArrangeTest
     {
-         
+
 
         public DateTime ArrangeDate = DateTime.Now;
         /// <summary>
         /// 测试课程属性优先级 group>v2>v1
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestGroupV2V1()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -32,7 +32,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -51,8 +51,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -60,8 +60,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V2
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -69,8 +69,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V1
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V1
                 }
 
             }
@@ -86,7 +86,7 @@ namespace D_3Tester
         /// <summary>
         /// 标准大于非标准
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void StandardGraterthanNoStardard()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -96,7 +96,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -115,8 +115,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 9:00:00"),
@@ -124,8 +124,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 7:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V2
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V2
                 }
             }
             };
@@ -140,7 +140,7 @@ namespace D_3Tester
         /// <summary>
         /// 标准大于非标（即使连续）
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void StandardGraterthanNoStardardSerial()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -150,7 +150,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -169,8 +169,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
@@ -178,8 +178,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 7:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V2
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 9:00:00"),
@@ -187,8 +187,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V1
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V1
                 }
             }
             };
@@ -202,7 +202,7 @@ namespace D_3Tester
         /// <summary>
         /// 教室排课已占用
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestOccupied()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -221,7 +221,7 @@ namespace D_3Tester
                 },
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
-                     roomId=1,                      
+                     roomId=1,
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -240,8 +240,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -249,8 +249,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V2
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -258,8 +258,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.V1
+                        steacherCode="T01",
+                         nTutorType= ETeachType.V1
                 }
 
             }
@@ -273,7 +273,7 @@ namespace D_3Tester
         /// <summary>
         /// 最大4连标
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestMaxSerial4()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -285,7 +285,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -304,8 +304,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 12:00:00"),
@@ -313,8 +313,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
@@ -322,8 +322,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=4,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -331,8 +331,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=5,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
@@ -340,8 +340,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=6,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 20:30:00"),
@@ -349,8 +349,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 }
 
             }
@@ -374,7 +374,7 @@ namespace D_3Tester
         /// <summary>
         /// 测试连标大于标
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestSerialStandardGreaterthanStandard()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -384,7 +384,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -403,8 +403,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -412,8 +412,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 },    new CourseArrangementEntity(){
                  courseArrangingId=4,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
@@ -421,8 +421,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 }
 
             }
@@ -438,7 +438,7 @@ namespace D_3Tester
         /// <summary>
         /// 测试连续数较大的连标优先
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestSerialLevelGreaterThanSerial()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -448,7 +448,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -467,8 +467,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -476,8 +476,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 } ,     new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
@@ -485,8 +485,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=4,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -494,8 +494,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=5,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
@@ -503,8 +503,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 }
 
             }
@@ -520,7 +520,7 @@ namespace D_3Tester
         /// <summary>
         /// 相同连标最早成连的优先
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestSerialLevelCompare()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -530,7 +530,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -550,8 +550,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=2,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -559,8 +559,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                 courseArrangingId=3,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
@@ -568,8 +568,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },
                     new CourseArrangementEntity(){
                  courseArrangingId=4,
@@ -578,8 +578,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=5,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -587,8 +587,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=6,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
@@ -596,8 +596,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
                 }
 
             }
@@ -613,7 +613,7 @@ namespace D_3Tester
         /// <summary>
         /// 排课时间
         /// </summary>
-         [TestMethod]
+        [TestMethod]
         public void TestOperateDateCompare()
         {
             var testModel = new ClassroomArrangeParameterModel()
@@ -623,7 +623,7 @@ namespace D_3Tester
                 ClassroomsEntities = new List<ClassroomEntity>() {
                 new ClassroomEntity(){
                      roomId=1,
-                      
+
                        campusCode="SH001",
                         venueId="S01",
                          TeachType= D_3.Models.ETeachType.Group,
@@ -643,8 +643,8 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T01",
-                         teachType= ETeachType.Group
+                        steacherCode="T01",
+                         nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
                  courseArrangingId=4,
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
@@ -652,9 +652,9 @@ namespace D_3Tester
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 13:00:00"),
-                        sTeacherCode="T02",
-                         teachType= ETeachType.Group
-                } 
+                        steacherCode="T02",
+                         nTutorType= ETeachType.Group
+                }
             }
             };
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;

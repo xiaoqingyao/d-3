@@ -22,9 +22,9 @@ namespace D_3.Models.Entities
         /// </summary>
         public string onClassVenueId { get; set; }
         /// <summary>
-        /// 教师id sTeacherCode
+        /// 教师id sTeacherCode 
         /// </summary>
-        public string sTeacherCode { get; set; }
+        public string steacherCode { get; set; }
         /// <summary>
         /// 开始时间
         /// </summary>
@@ -36,7 +36,7 @@ namespace D_3.Models.Entities
         /// <summary>
         /// 授课类型
         /// </summary>
-        public ETeachType teachType { get; set; }
+        public ETeachType nTutorType { get; set; }
         /// <summary>
         /// 排课时间
         /// </summary>

@@ -44,7 +44,7 @@ namespace D_3.Models.Business
 
             message = "成功";
             //专属教室验证
-            if (this.IsExclusive && this.exclusiveTeacherCode != courseArrangement.sTeacherCode)
+            if (this.IsExclusive && this.exclusiveTeacherCode != courseArrangement.steacherCode)
             {
                 message = "专属教室不匹配";
                 return false;
@@ -100,7 +100,7 @@ namespace D_3.Models.Business
                 return false;
             foreach (var ocCourse in OccupiedCourseArrangement)
             {
-                if (ocCourse.sTeacherCode == courseArrangement.sTeacherCode)
+                if (ocCourse.steacherCode == courseArrangement.steacherCode)
                 {
                     return true;
                 }

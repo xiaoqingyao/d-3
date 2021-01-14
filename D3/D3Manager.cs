@@ -22,7 +22,7 @@ namespace D3
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="day"></param>
-        public static bool D3(int year, int month, int day)
+        public async static Task<bool> D3(int year, int month, int day)
         {
             try
             {
@@ -40,11 +40,9 @@ namespace D3
                 List<CourseArrangementQueueEntity> courseArrangementQueue = null;//待定排课记录
                 List<LogSortedClassroomEntity> logSortedClassroomEntities = null;//教室排序日志
                 var classroomArrangeResult = new ClassroomArranger(classroomArrangeData.ArrangeDate, sortedCourseArrangement, classroomArrangeData.ClassroomsEntities, classroomArrangeData.OccupiedClassroomArrangementEntities).Arrange(out courseArrangementQueue, out logSortedClassroomEntities);
-
-                //结果入库
-                
+                //入库
                 var d3arrangeRel = new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangeResult, courseArrangementQueue, logSortedClassroomEntities);
-                dataManager.D3ToDb(d3arrangeRel);
+                await dataManager.D3ToDb(d3arrangeRel);
             }
             catch (Exception ex)
             {
@@ -53,33 +51,28 @@ namespace D3
             }
             return true;
         }
-
         /// <summary>
         /// D-3内计算
         /// </summary>
-        public static void WithinD3(string campusCode, string venueId, int year, int month, int day)
+        public async static Task WithinD3(string campusCode, string venueId, int year, int month, int day)
         {
-            //先拿排班表、待定表、学员课时核录拿到未排班的记录，视为待处理数据
-
             //已排教室表
             var occupiedArrangement = new DataManager().GetClassroomArrangement(year, month, day, campusCode, venueId);
-            //当期待定表/学员课时核录/d-3内要处理的数据
-            //数据获取方式：未入教室的，都认为是待定表数据，统一处理。
-            //var courseArrangementQueue = new DataManager().GetCourseArrangementQueue(campusCode, venueId, year, month, day);
+            //当期待定表
+            //数据获取方式：未入教室的课时核录数据，都认为是待定表数据。
             var expectids = occupiedArrangement.Select(p => p.courseArrangingId);
             var courseArrangement = new DataManager().GetCourseArrangement(year, month, day, campusCode, venueId, expectids.ToArray());
             //待定表按照排课时间排序
             var sortedCourseArrangement = courseArrangement.OrderBy(p => p.dtPKDateTime).ToList();
             //获取所有教室
             var classrooms = new DataManager().GetClassrooms(campusCode, venueId);
-
             //排班待定表
             List<CourseArrangementQueueEntity> courseQueue = null;//新待定
             List<LogSortedClassroomEntity> sortedClassroomEntitie = null;//教室排列日志
             var classroomArrangement = new ClassroomArranger(DateTime.Parse($"{year}-{month}-{day}"), sortedCourseArrangement, classrooms, occupiedArrangement).Arrange(out courseQueue, out sortedClassroomEntitie);
 
             //更新数据库
-            new DataManager().D3ToDb(new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangement, courseQueue, sortedClassroomEntitie));
+            await new DataManager().D3ToDb(new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangement, courseQueue, sortedClassroomEntitie));
 
         }
         /// <summary>
@@ -87,7 +80,7 @@ namespace D3
         /// </summary>
         /// <param name="roomId"></param>
         /// <param name="courseArrangementId"></param>
-        public static void FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
+        public async static Task FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
         {
             //释放并返回释放的排班顺序
             var classroomArrangement = new DataManager().FreeClassroomArrangement(roomId, courseArrangementId, deleteReson);
@@ -100,10 +93,9 @@ namespace D3
             {
                 foreach (var whind3Item in groupClassroomArrangement)
                 {
-                    WithinD3(whind3Item.campusCode, whind3Item.venueId, whind3Item.dtDateRealYear, whind3Item.dtDateRealMonth, whind3Item.dtDateRealDay);
+                    await WithinD3(whind3Item.campusCode, whind3Item.venueId, whind3Item.dtDateRealYear, whind3Item.dtDateRealMonth, whind3Item.dtDateRealDay);
                 }
             }
-
         }
     }
 }

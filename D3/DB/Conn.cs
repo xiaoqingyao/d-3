@@ -16,7 +16,7 @@ namespace VIP.SystemService.DB
 		static Conn()
 		{
 			// initialize the database connection string 
-			m_connString = "data source=172.16.4.40;user id=sa;password=ATF.db.test?;persist security info=True;initial catalog = gstest;Connect Timeout=600;Pooling=true; MAX Pool Size=512;Min Pool Size=50;Connection Lifetime=30";
+			m_connString = "data source=10.16.4.22;user id=sa;password=ATF.db.test?;persist security info=True;initial catalog = gstest;Connect Timeout=600;Pooling=true; MAX Pool Size=512;Min Pool Size=50;Connection Lifetime=30";
 			 
 		}
 

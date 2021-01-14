@@ -49,6 +49,7 @@ namespace D_3.Models.Entities
         /// 可教学范围
         /// </summary>
         public ETeachType[] TeachRange { get; set; }
+        public string teachingAttributes { get; set; }
         /// <summary>
         /// 是否是专属教室
         /// </summary>

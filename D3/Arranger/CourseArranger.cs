@@ -55,7 +55,7 @@ namespace D_3.Arranger
 
                 //是否是连续
                 bool isSerial = false;
-                var compareList = courseArrangementEntities.Where(p => p.sTeacherCode == entity.sTeacherCode && p.onClassCampusCode == entity.onClassCampusCode && p.onClassVenueId == entity.onClassVenueId);
+                var compareList = courseArrangementEntities.Where(p => p.steacherCode == entity.steacherCode && p.onClassCampusCode == entity.onClassCampusCode && p.onClassVenueId == entity.onClassVenueId);
                 if (isStandard)
                 {
                     foreach (var compare in compareList)
@@ -96,7 +96,7 @@ namespace D_3.Arranger
                     continue;
                 }
                 CourseArrangementSerial serialarrangement = (CourseArrangementSerial)arrangement;
-                var compareList = serialArrangements.Where(p => p.sTeacherCode == arrangement.sTeacherCode && p.onClassCampusCode == arrangement.onClassCampusCode && p.onClassVenueId == arrangement.onClassVenueId && !mergedCourseArrangementSerialIds.Contains(p.courseArrangingId));
+                var compareList = serialArrangements.Where(p => p.steacherCode == arrangement.steacherCode && p.onClassCampusCode == arrangement.onClassCampusCode && p.onClassVenueId == arrangement.onClassVenueId && !mergedCourseArrangementSerialIds.Contains(p.courseArrangingId) && p.courseArrangingId != serialarrangement.courseArrangingId);
                 getNextSerialCourse(serialarrangement, serialarrangement, compareList);
                 _courseArrangement.Add(serialarrangement);
             }
@@ -108,27 +108,28 @@ namespace D_3.Arranger
         private void SortCourseArrangements()
         {
             //int keyIndex = 0;
-            var courseList = _courseArrangement.OrderByDescending(p => p.teachType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
+            var courseList = _courseArrangement.OrderByDescending(p => p.nTutorType).ThenByDescending(p => p.CourseArrangementType).ThenByDescending(p => p.SerialLevel).ThenBy
                 (p => p.EarliestMergeDate).ThenBy(p => p.dtPKDateTime).ToList();
             foreach (var arrangement in courseList)
             {
                 if (arrangement is CourseArrangementSerial)
                 {
                     var arrangementSerial = arrangement as CourseArrangementSerial;
-                    for (int i = 0; i < arrangementSerial.SerialLevel; i++)
-                    {
-                        _sortedCourseArrangement.Add(arrangementSerial);
-                        if (arrangementSerial.Next != null)
-                        {
-                            arrangementSerial = arrangementSerial.Next;
-                        }
-                    }
+                    getAllSerialArrangement(arrangementSerial);
                 }
                 else
                 {
-                    _sortedCourseArrangement.Add( arrangement);
+                    _sortedCourseArrangement.Add(arrangement);
                 }
                 //keyIndex++;
+            }
+        }
+        private void getAllSerialArrangement(CourseArrangementSerial arrangementSerial) {
+
+            _sortedCourseArrangement.Add(arrangementSerial);
+            if (arrangementSerial.Next != null)
+            {
+                getAllSerialArrangement(arrangementSerial.Next);
             }
         }
 
@@ -141,23 +142,33 @@ namespace D_3.Arranger
         /// <param name="compareList">课程对照列表</param>
         private void getNextSerialCourse(CourseArrangementSerial root, CourseArrangementSerial arrangement, IEnumerable<CourseArrangement> compareList)
         {
+            addedSerialId(arrangement.courseArrangingId);
             foreach (var compare in compareList)
             {
                 var arrSerial = RoleReferee.IsSerial(arrangement.dtLessonBeginReal, arrangement.dtLessonEndReal, compare.dtLessonBeginReal, compare.dtLessonEndReal);
                 var isSerial = arrSerial[0];
                 var isCurrentFront = arrSerial[1];
-                if (isSerial)
-                {
-                    root.EarliestMergeDate = arrangement.EarliestMergeDate < compare.EarliestMergeDate ? arrangement.EarliestMergeDate : compare.EarliestMergeDate;
-                }
                 if (isSerial && isCurrentFront)
                 {
                     var nextCourseArrangement = (CourseArrangementSerial)compare;
-                    mergedCourseArrangementSerialIds.Add(nextCourseArrangement.courseArrangingId);
+
+                    addedSerialId(nextCourseArrangement.courseArrangingId);
                     arrangement.Next = nextCourseArrangement;
+                    root.EarliestMergeDate = arrangement.EarliestMergeDate < compare.EarliestMergeDate ? arrangement.EarliestMergeDate : compare.EarliestMergeDate;
                     getNextSerialCourse(root, nextCourseArrangement, compareList);
                     root.SerialLevel++;
                 }
+            }
+        }
+        /// <summary>
+        /// 记录已经合并的排课id
+        /// </summary>
+        /// <param name="courseArrangingId"></param>
+        private void addedSerialId(int courseArrangingId)
+        {
+            if (!mergedCourseArrangementSerialIds.Contains(courseArrangingId))
+            {
+                mergedCourseArrangementSerialIds.Add(courseArrangingId);
             }
         }
 
