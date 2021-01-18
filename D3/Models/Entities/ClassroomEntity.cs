@@ -7,7 +7,7 @@ namespace D_3.Models.Entities
     /// <summary>
     /// 教室配置信息
     /// </summary>
-    public class ClassroomEntity : BaseEntity
+    public class ClassroomEntity 
     {
         /// <summary>
         /// 序号

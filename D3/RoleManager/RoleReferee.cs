@@ -89,6 +89,11 @@ namespace D_3.RoleManager
         {
             return true;
         }
+        /// <summary>
+        /// 是否是上午
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         private static bool isMorning(DateTime dt)
         {
             return dt.Hour < 12;

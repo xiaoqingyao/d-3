@@ -13,10 +13,9 @@ namespace D3.Models.Entities
     public class LogSortedClassroomEntity: ClassroomEntity
     {
         public int logId { get; set; }
-        /// <summary>
-        /// 排课id
-        /// </summary>
-        public int courseArrangingId { get; set; }
+
+        public string sClasscode { get; set; }
+        public DateTime dtLessonBeginReal { get; set; }
         /// <summary>
         /// 是否加入成功
         /// </summary>

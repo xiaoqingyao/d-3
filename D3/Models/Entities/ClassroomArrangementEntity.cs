@@ -16,7 +16,8 @@ namespace D_3.Models.Entities
         /// <summary>
         /// 排课id/课程id(对应学员课时核录id)
         /// </summary>
-        public int courseArrangingId { get; set; }
+        public string sClasscode { get; set; }
+ 
         /// <summary>
         /// 学校
         /// </summary>
@@ -48,7 +49,7 @@ namespace D_3.Models.Entities
         /// <summary>
         /// 课程id
         /// </summary>
-        public int courseId { get; set; }
+        //public int courseId { get; set; }
         public bool isDelete { get; set; }
         public string deleteReason { get; set; }
         /// <summary>

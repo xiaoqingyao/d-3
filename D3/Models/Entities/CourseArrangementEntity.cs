@@ -10,9 +10,9 @@ namespace D_3.Models.Entities
     public class CourseArrangementEntity
     {
         /// <summary>
-        /// 排课课程记录唯一
+        /// 排课课程记录（通过classcode与dtLessonBeginReal可以确定唯一课节）
         /// </summary>
-        public int courseArrangingId { get; set; }
+        //public int courseArrangingId { get; set; }
         /// <summary>
         /// 学校
         /// </summary>
@@ -41,6 +41,10 @@ namespace D_3.Models.Entities
         /// 排课时间
         /// </summary>
         public DateTime dtPKDateTime { get; set; }
+        /// <summary>
+        /// 班级编码
+        /// </summary>
+        public string sClasscode { get; set; }
 
     }
 }

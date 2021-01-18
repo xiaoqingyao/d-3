@@ -45,7 +45,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -54,7 +54,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -63,7 +63,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -80,7 +80,7 @@ namespace D_3Tester
             //判定
             Assert.AreEqual(classroomArrangements.Count, 1);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 2);
-            Assert.AreEqual(classroomArrangements[0].courseId, 1);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "1");
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -118,7 +118,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 9:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -134,7 +134,7 @@ namespace D_3Tester
             //判定
             Assert.AreEqual(classroomArrangements.Count, 1);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(classroomArrangements[0].courseId, 1);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "1");
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -172,7 +172,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -181,7 +181,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 9:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -197,7 +197,7 @@ namespace D_3Tester
             //判定
             Assert.AreEqual(classroomArrangements.Count, 2);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(courseArrangementNeedToDos[0].courseArrangingId, 3);
+            Assert.AreEqual(courseArrangementNeedToDos[0].sClasscode, "3");
         }
         /// <summary>
         /// 教室排课已占用
@@ -211,10 +211,9 @@ namespace D_3Tester
                 OccupiedClassroomArrangementEntities = new List<D_3.Models.Entities.ClassroomArrangementEntity>() {
                      new ClassroomArrangementEntity(){
                          dtPKDateTime= ArrangeDate,
-                           courseArrangingId=1,
+                           sClasscode="1",
                             dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                              dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 8:00:00"),
-                              courseId=1,
                                campusCode="SH001",
                                  venueId="S01",roomId=1
                      }
@@ -234,7 +233,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -243,7 +242,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -252,7 +251,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.V2
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -298,7 +297,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -307,7 +306,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 12:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -316,7 +315,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -325,7 +324,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=4,
+                sClasscode="4",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -334,7 +333,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=5,
+                sClasscode="5",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -343,7 +342,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=6,
+                sClasscode="6",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 20:30:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -368,7 +367,7 @@ namespace D_3Tester
 
             //判定
             Assert.AreEqual(((CourseArrangementSerial)sortedCourseArrangement[0]).SerialLevel, 4);
-            Assert.AreEqual(((CourseArrangementSerial)sortedCourseArrangement[1]).SerialLevel, 2);
+            Assert.AreEqual(((CourseArrangementSerial)sortedCourseArrangement[4]).SerialLevel, 2);
         }
 
         /// <summary>
@@ -397,7 +396,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {        new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 12:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -406,7 +405,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -415,7 +414,7 @@ namespace D_3Tester
                         steacherCode="T02",
                          nTutorType= ETeachType.Group
                 },    new CourseArrangementEntity(){
-                 courseArrangingId=4,
+                 sClasscode="4",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 10:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -430,9 +429,9 @@ namespace D_3Tester
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
             //判定
-            Assert.AreEqual(classroomArrangements.Count, 1);
+            Assert.AreEqual(classroomArrangements.Count, 2);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(classroomArrangements[0].courseId, 4);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "4");
         }
 
         /// <summary>
@@ -461,7 +460,7 @@ namespace D_3Tester
             },
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {            new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -470,7 +469,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -479,7 +478,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 } ,     new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -488,7 +487,7 @@ namespace D_3Tester
                         steacherCode="T02",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=4,
+                 sClasscode="4",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -497,7 +496,7 @@ namespace D_3Tester
                         steacherCode="T02",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=5,
+                 sClasscode="5",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
                     dtPKDateTime=DateTime.Now.AddDays(new Random().Next(1,4)),
                      onClassCampusCode="SH001",
@@ -512,9 +511,9 @@ namespace D_3Tester
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
             //判定
-            Assert.AreEqual(classroomArrangements.Count, 1);
-            Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(classroomArrangements[0].courseId, 3);
+            Assert.AreEqual(classroomArrangements.Count, 3);
+            Assert.AreEqual(courseArrangementNeedToDos.Count, 2);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "3");
         }
 
         /// <summary>
@@ -544,7 +543,7 @@ namespace D_3Tester
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {
                       new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                     dtPKDateTime=DateTime.Now.AddMinutes(1),
                      onClassCampusCode="SH001",
@@ -553,7 +552,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=2,
+                 sClasscode="2",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
                     dtPKDateTime=DateTime.Now.AddMinutes(1),
                      onClassCampusCode="SH001",
@@ -562,7 +561,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                courseArrangingId=3,
+                sClasscode="3",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
                     dtPKDateTime=DateTime.Now.AddMinutes(1),
                      onClassCampusCode="SH001",
@@ -572,7 +571,7 @@ namespace D_3Tester
                          nTutorType= ETeachType.Group
                 },
                     new CourseArrangementEntity(){
-                 courseArrangingId=4,
+                 sClasscode="4",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                      dtPKDateTime=DateTime.Now.AddMinutes(2),
                      onClassCampusCode="SH001",
@@ -581,7 +580,7 @@ namespace D_3Tester
                         steacherCode="T02",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=5,
+                 sClasscode="5",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
                       dtPKDateTime=DateTime.Now.AddMinutes(2),
                      onClassCampusCode="SH001",
@@ -590,9 +589,9 @@ namespace D_3Tester
                         steacherCode="T02",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=6,
+                 sClasscode="6",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 19:00:00"),
-                     dtPKDateTime=DateTime.Now.AddMinutes(0),
+                     dtPKDateTime=DateTime.Now.AddMinutes(0),//最早成班
                      onClassCampusCode="SH001",
                       onClassVenueId="S01",
                        dtLessonBeginReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 17:00:00"),
@@ -605,9 +604,9 @@ namespace D_3Tester
             List<CourseArrangementQueueEntity> courseArrangementNeedToDos;
             var classroomArrangements = arrange(testModel, out courseArrangementNeedToDos);
             //判定
-            Assert.AreEqual(classroomArrangements.Count, 1);
-            Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(classroomArrangements[0].courseId, 4);
+            Assert.AreEqual(classroomArrangements.Count, 3);
+            Assert.AreEqual(courseArrangementNeedToDos.Count, 3);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "4");
         }
 
         /// <summary>
@@ -637,7 +636,7 @@ namespace D_3Tester
                 CourseArrangementsEntities = new List<CourseArrangementEntity>()
             {
                       new CourseArrangementEntity(){
-                 courseArrangingId=1,
+                 sClasscode="1",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                     dtPKDateTime=DateTime.Now.AddMinutes(3),
                      onClassCampusCode="SH001",
@@ -646,7 +645,7 @@ namespace D_3Tester
                         steacherCode="T01",
                          nTutorType= ETeachType.Group
                 },new CourseArrangementEntity(){
-                 courseArrangingId=4,
+                 sClasscode="4",
                    dtLessonEndReal=DateTime.Parse($"{ArrangeDate.ToString("yyyy-MM-dd")} 15:00:00"),
                      dtPKDateTime=DateTime.Now.AddMinutes(2),
                      onClassCampusCode="SH001",
@@ -662,7 +661,7 @@ namespace D_3Tester
             //判定
             Assert.AreEqual(classroomArrangements.Count, 1);
             Assert.AreEqual(courseArrangementNeedToDos.Count, 1);
-            Assert.AreEqual(classroomArrangements[0].courseId, 4);
+            Assert.AreEqual(classroomArrangements[0].sClasscode, "4");
         }
 
 

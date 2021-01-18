@@ -39,10 +39,15 @@ namespace D_3.Arranger
             _occupiedClassroomArrangement = occupiedClassroomArrangement;
         }
 
+        /// <summary>
+        /// 课程入教室
+        /// </summary>
+        /// <param name="courseQueue">返回待定表</param>
+        /// <param name="sortedClassroomEntities">返回排教室过程日志</param>
+        /// <returns>排教室结果</returns>
         public List<ClassroomArrangementEntity> Arrange(out List<CourseArrangementQueueEntity> courseQueue, out List<LogSortedClassroomEntity> sortedClassroomEntities)
         {
-            //形成教室排课记录表
-            List<ClassroomArrangementEntity> classroomArrangements = new List<ClassroomArrangementEntity>();
+            List<ClassroomArrangementEntity> classroomArrangements = new List<ClassroomArrangementEntity>();//排教室结果表
             courseQueue = new List<CourseArrangementQueueEntity>();//待定表
             sortedClassroomEntities = new List<LogSortedClassroomEntity>();
             if (_classrooms == null || _classrooms.Count == 0 || _sortedCourseArrangement == null || _sortedCourseArrangement.Count == 0)
@@ -86,7 +91,8 @@ namespace D_3.Arranger
                     }
                     logSortedClassroomEntity.sortIndex = sortIndex;
                     logSortedClassroomEntity.isSuccess = isSuccess;
-                    logSortedClassroomEntity.courseArrangingId = courseArrangement.courseArrangingId;
+                    logSortedClassroomEntity.sClasscode = courseArrangement.sClasscode;
+                    logSortedClassroomEntity.dtLessonBeginReal = courseArrangement.dtLessonBeginReal;
                     logSortedClassroomEntity.message = message;
                     sortedClassroomEntities.Add(logSortedClassroomEntity);
                 }
@@ -110,12 +116,11 @@ namespace D_3.Arranger
                     {
                         dtPKDateTime = this._arrangeDate,
                         roomId = classroom.roomId,
-                        courseArrangingId = courseAggrangement.courseArrangingId,
+                        sClasscode = courseAggrangement.sClasscode,
                         dtLessonBeginReal = courseAggrangement.dtLessonBeginReal,
                         dtLessonEndReal = courseAggrangement.dtLessonEndReal,
                         campusCode = courseAggrangement.onClassCampusCode,
                         venueId = courseAggrangement.onClassVenueId,
-                        courseId = courseAggrangement.courseArrangingId,
                         dtDateRealYear = courseAggrangement.dtLessonBeginReal.Year,
                         dtDateRealMonth = courseAggrangement.dtLessonBeginReal.Month,
                         dtDateRealDay = courseAggrangement.dtLessonBeginReal.Day,

@@ -24,16 +24,17 @@ namespace D_3.Arranger
         /// </summary>
         private List<CourseArrangementEntity> _sortedCourseArrangement { get; set; } = new List<CourseArrangementEntity>();
 
+        List<string> mergedCourseArrangementSerialIds = new List<string>();//记录已经处理过的连课id
 
         public CourseArranger()
         { }
         public List<CourseArrangementEntity> Arrange(IEnumerable<CourseArrangementEntity> courseArrangementEntity)
         {
-            //判定排课的性质
+            //判定排课的性质 total:5,serial:3
             var arrangements = initData(courseArrangementEntity);
-            //合并连续课
+            //合并连续课 total:3
             MergeSerialCourseArrangements(arrangements);
-            //分解合并，形成按优先级的队列
+            //分解合并，形成按优先级的队列 total:5
             SortCourseArrangements();
             return _sortedCourseArrangement;
         }
@@ -91,19 +92,18 @@ namespace D_3.Arranger
             //按照上课时间正序找每个课程的下一节课
             foreach (var arrangement in serialArrangements)
             {
-                if (mergedCourseArrangementSerialIds.Contains(arrangement.courseArrangingId))
+                if (mergedCourseArrangementSerialIds.Contains(arrangement.sClasscode))
                 {
                     continue;
                 }
                 CourseArrangementSerial serialarrangement = (CourseArrangementSerial)arrangement;
-                var compareList = serialArrangements.Where(p => p.steacherCode == arrangement.steacherCode && p.onClassCampusCode == arrangement.onClassCampusCode && p.onClassVenueId == arrangement.onClassVenueId && !mergedCourseArrangementSerialIds.Contains(p.courseArrangingId) && p.courseArrangingId != serialarrangement.courseArrangingId);
+                var compareList = serialArrangements.Where(p => p.steacherCode == arrangement.steacherCode && p.onClassCampusCode == arrangement.onClassCampusCode && p.onClassVenueId == arrangement.onClassVenueId && !mergedCourseArrangementSerialIds.Contains(p.sClasscode) && p.sClasscode != serialarrangement.sClasscode);
                 getNextSerialCourse(serialarrangement, serialarrangement, compareList);
                 _courseArrangement.Add(serialarrangement);
             }
         }
-
         /// <summary>
-        /// 排序
+        /// 排序形成优先级队列
         /// </summary>
         private void SortCourseArrangements()
         {
@@ -124,6 +124,11 @@ namespace D_3.Arranger
                 //keyIndex++;
             }
         }
+
+        /// <summary>
+        /// 递归合并连标课
+        /// </summary>
+        /// <param name="arrangementSerial"></param>
         private void getAllSerialArrangement(CourseArrangementSerial arrangementSerial) {
 
             _sortedCourseArrangement.Add(arrangementSerial);
@@ -132,17 +137,15 @@ namespace D_3.Arranger
                 getAllSerialArrangement(arrangementSerial.Next);
             }
         }
-
-        List<int> mergedCourseArrangementSerialIds = new List<int>();//记录已经处理过的连课id
         /// <summary>
-        /// 获取下一个连课
+        /// 获取连标课的下一节课
         /// </summary>
         /// <param name="root">连课中最早的课</param>
         /// <param name="arrangement">当前判定课程</param>
         /// <param name="compareList">课程对照列表</param>
         private void getNextSerialCourse(CourseArrangementSerial root, CourseArrangementSerial arrangement, IEnumerable<CourseArrangement> compareList)
         {
-            addedSerialId(arrangement.courseArrangingId);
+            addedSerialId(arrangement.sClasscode);
             foreach (var compare in compareList)
             {
                 var arrSerial = RoleReferee.IsSerial(arrangement.dtLessonBeginReal, arrangement.dtLessonEndReal, compare.dtLessonBeginReal, compare.dtLessonEndReal);
@@ -152,7 +155,7 @@ namespace D_3.Arranger
                 {
                     var nextCourseArrangement = (CourseArrangementSerial)compare;
 
-                    addedSerialId(nextCourseArrangement.courseArrangingId);
+                    addedSerialId(nextCourseArrangement.sClasscode);
                     arrangement.Next = nextCourseArrangement;
                     root.EarliestMergeDate = arrangement.EarliestMergeDate < compare.EarliestMergeDate ? arrangement.EarliestMergeDate : compare.EarliestMergeDate;
                     getNextSerialCourse(root, nextCourseArrangement, compareList);
@@ -161,17 +164,16 @@ namespace D_3.Arranger
             }
         }
         /// <summary>
-        /// 记录已经合并的排课id
+        /// 记录已经合并的课程id
         /// </summary>
         /// <param name="courseArrangingId"></param>
-        private void addedSerialId(int courseArrangingId)
+        private void addedSerialId(string courseArrangingId)
         {
             if (!mergedCourseArrangementSerialIds.Contains(courseArrangingId))
             {
                 mergedCourseArrangementSerialIds.Add(courseArrangingId);
             }
         }
-
         /// <summary>
         /// build排课业务对象
         /// </summary>

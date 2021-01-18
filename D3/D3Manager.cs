@@ -54,13 +54,19 @@ namespace D3
         /// <summary>
         /// D-3内计算
         /// </summary>
+        /// <param name="campusCode">校区</param>
+        /// <param name="venueId">教学点</param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <returns></returns>
         public async static Task WithinD3(string campusCode, string venueId, int year, int month, int day)
         {
             //已排教室表
             var occupiedArrangement = new DataManager().GetClassroomArrangement(year, month, day, campusCode, venueId);
             //当期待定表
             //数据获取方式：未入教室的课时核录数据，都认为是待定表数据。
-            var expectids = occupiedArrangement.Select(p => p.courseArrangingId);
+            var expectids = occupiedArrangement.Select(p => p.sClasscode);
             var courseArrangement = new DataManager().GetCourseArrangement(year, month, day, campusCode, venueId, expectids.ToArray());
             //待定表按照排课时间排序
             var sortedCourseArrangement = courseArrangement.OrderBy(p => p.dtPKDateTime).ToList();
@@ -78,8 +84,9 @@ namespace D3
         /// <summary>
         /// 释放已排班的排课
         /// </summary>
-        /// <param name="roomId"></param>
-        /// <param name="courseArrangementId"></param>
+        /// <param name="roomId">教室id</param>
+        /// <param name="courseArrangementId">排课id</param>
+        /// <param name="deleteReson">原因</param>
         public async static Task FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
         {
             //释放并返回释放的排班顺序

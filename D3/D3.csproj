@@ -64,7 +64,6 @@
     <Compile Include="Models\Business\CourseArrangementSerial.cs" />
     <Compile Include="Models\EClassroomSortType.cs" />
     <Compile Include="Models\ECourseArrangementType.cs" />
-    <Compile Include="Models\Entities\BaseEntity.cs" />
     <Compile Include="Models\Entities\ClassroomArrangementEntity.cs" />
     <Compile Include="Models\Entities\ClassroomEntity.cs" />
     <Compile Include="Models\Entities\CourseArrangementEntity.cs" />

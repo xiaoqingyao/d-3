@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace D3UnitTest
 {
+    /// <summary>
+    /// D-3整体测试
+    /// </summary>
     [TestClass]
     public class D3Test
     {

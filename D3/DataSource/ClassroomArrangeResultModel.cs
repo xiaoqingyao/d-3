@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 
 namespace D3.DataSource
 {
+    /// <summary>
+    ///  排班处理结果Model
+    /// </summary>
     public class ClassroomArrangeResultModel
     {
-
         /// <summary>
         /// 
         /// </summary>
