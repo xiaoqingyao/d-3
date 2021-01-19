@@ -22,11 +22,11 @@ namespace D3UnitTest
         [TestMethod]
         public void TestD3EveryDay()
         {
-            var rel = D3Manager.D3(2021, 1, 7);
+            var rel = D3Manager.D3(2020, 10, 10);
             Assert.AreEqual(true, rel.Result);
-            rel = D3Manager.D3(2021, 1, 7);
+            rel = D3Manager.D3(2020, 10, 10);
             Assert.AreEqual(false, rel.Result);
-            rel = D3Manager.WithinD3("VPVP036", "19", 2021, 1, 7);
+            rel = D3Manager.WithinD3("VPVP036", "19", 2020, 10, 10);
             Assert.AreEqual(false, rel.Result);
         }
         /// <summary>

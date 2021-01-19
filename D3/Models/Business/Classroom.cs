@@ -79,12 +79,19 @@ namespace D_3.Models.Business
         /// <returns></returns>
         public bool AddCourseArrangement(CourseArrangementEntity courseArrangement, out string message)
         {
+            //if (this.roomId==13)
+            //{
+
+            //}
             message = string.Empty;
             var isMatch = this.isMatch(courseArrangement, out message);
             if (!isMatch)
             {
                 return false;
             }
+            //else { 
+                
+            //}
             this.OccupiedCourseArrangement.Add(courseArrangement);
             this.OccupiedRanges.Add(new ClassroomDateRange(courseArrangement.dtLessonBeginReal, courseArrangement.dtLessonEndReal));
             return true;

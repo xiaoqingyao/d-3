@@ -39,7 +39,8 @@ namespace D3
                 //排班
                 List<CourseArrangementQueueEntity> courseArrangementQueue = null;//待定排课记录
                 List<LogSortedClassroomEntity> logSortedClassroomEntities = null;//教室排序日志
-                var classroomArrangeResult = new ClassroomArranger(classroomArrangeData.ArrangeDate, sortedCourseArrangement, classroomArrangeData.ClassroomsEntities, classroomArrangeData.OccupiedClassroomArrangementEntities).Arrange(out courseArrangementQueue, out logSortedClassroomEntities);
+                var classroomArrangeResult = new ClassroomArranger(classroomArrangeData.ArrangeDate, sortedCourseArrangement, classroomArrangeData.ClassroomsEntities, classroomArrangeData.OccupiedClassroomArrangementEntities)
+                    .Arrange(out courseArrangementQueue, out logSortedClassroomEntities);
                 //入库
                 var d3arrangeRel = new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangeResult, courseArrangementQueue, logSortedClassroomEntities);
                 var executeCount = await dataManager.D3ToDb(d3arrangeRel);
@@ -64,6 +65,12 @@ namespace D3
         {
             //已排教室表
             var occupiedArrangement = new DataManager().GetClassroomArrangement(year, month, day, campusCode, venueId);
+            if (occupiedArrangement==null|| occupiedArrangement.Count()==0)
+            {
+                //未执行过d-3，不执行d-3内
+                //todo 写日志记录提醒，没有执行d-3就触发了d-3内
+                return false;
+            }
             //当期待定表
             //数据获取方式：未入教室的课时核录数据，都认为是待定表数据。
             var expectids = occupiedArrangement.Select(p => p.sClasscode);
@@ -89,7 +96,6 @@ namespace D3
         /// <param name="deleteReson">原因</param>
         public async static Task<bool> FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
         {
-            //todo添加d-3日志表 过滤无效的d-3内规则
             //todo添加释放逻辑判断，针对1-1之外的，如果还存在课，就不释放教室
             //释放并返回释放的排班顺序
             var classroomArrangement = new DataManager().FreeClassroomArrangement(roomId, courseArrangementId, deleteReson);

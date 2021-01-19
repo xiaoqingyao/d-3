@@ -74,6 +74,10 @@ namespace D_3.Arranger
             //开始分配教室
             foreach (var courseArrangement in _sortedCourseArrangement)
             {
+                //if (courseArrangement.sClasscode=="VP202030635")
+                //{
+
+                //}
                 //根据课程排序教室
                 var sortedClassrooms = sortClassRooms(courseArrangement);
                 bool isSuccess = false;

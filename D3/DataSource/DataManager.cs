@@ -76,8 +76,8 @@ namespace D_3.DataSource
                                     from view_VB_StudentLessonHeLu helu
                                          inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 and lessonroom.assignClassroomStatus!=1 
                                     where nTutorType=1--授课类型
-                                    and nAudit=0--未核录
-                                    and nStatus!=3--非缺勤记录
+                                    --and nAudit=0--未核录
+                                    --and nStatus!=3--非缺勤记录
                                     and dtDateReal=@dtDateReal
                     ";
                 //1v2 小组课
@@ -91,8 +91,8 @@ namespace D_3.DataSource
 					                inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 and lessonroom.assignClassroomStatus!=1
 					                inner join V_BS_Class cls on helu.sClasscode=cls.sCode and cls.fullClass=1
 					                where helu.nTutorType !=1
-							                and helu.nAudit=0--未核录
-							                and helu.nStatus!=3--非缺勤记录
+							                --and helu.nAudit=0--未核录
+							                --and helu.nStatus!=3--非缺勤记录
 							                and helu.dtDateReal=@dtDateReal
                                             {0}
 				                ) a 
@@ -193,20 +193,23 @@ namespace D_3.DataSource
                     foreach (var classroomArrangement in d3DbResultModel.ClassroomArrangements)
                     {
                         await conn.ExecuteAsync(@"
-                        update V_BS_StudentLessonClassroom 
-                                set assignClassroomStatus=1,
-                                    assignClassroomId=@assignClassroomId
-                                where classCode=@sClasscode
-                        ", param: new { assignClassroomId = classroomArrangement.roomId, sClasscode = classroomArrangement.sClasscode }, transaction: trans);
+                            update room set room.assignClassroomStatus=1,
+				                            room.assignClassroomId=@assignClassroomId
+                            from view_VB_StudentLessonHeLu helu 
+				                            inner join V_BS_StudentLessonClassroom room on helu.id=room.lessonId
+				                            where helu.sclasscode=@sClasscode  and helu.dtLessonBeginReal=@dtLessonBeginReal
+                        ", param: new { assignClassroomId = classroomArrangement.roomId, sClasscode = classroomArrangement.sClasscode, dtLessonBeginReal = classroomArrangement.dtLessonBeginReal }, transaction: trans);
                     }
                     //todu 会写课时核录扩展表
                     foreach (var queue in d3DbResultModel.CourseArrangementQueue)
                     {
                         await conn.ExecuteAsync(@"
-                        update V_BS_StudentLessonClassroom 
-                                set assignClassroomStatus=2
-                                where classCode=@sClasscode
-                        ", param: new {   sClasscode = queue.sClasscode }, transaction: trans);
+                         update room set room.assignClassroomStatus=2
+                            from view_VB_StudentLessonHeLu helu 
+				                            inner join V_BS_StudentLessonClassroom room on helu.id=room.lessonId
+				                            where helu.sclasscode=@sClasscode  and helu.dtLessonBeginReal=@dtLessonBeginReal
+
+                        ", param: new { sClasscode = queue.sClasscode, dtLessonBeginReal = queue.dtLessonBeginReal }, transaction: trans);
                     }
                     trans.Commit();
                 }
