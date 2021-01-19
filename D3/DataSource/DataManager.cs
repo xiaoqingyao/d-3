@@ -74,7 +74,7 @@ namespace D_3.DataSource
                 string sql1v1 = @"
                        select  helu.sClasscode,helu.steacherCode,helu.nTutorType,helu.dtPKDateTime,helu.dtLessonBeginReal,helu.dtDateReal,dtLessonEndReal,lessonroom.onClassCampusCode,lessonroom.onClassVenueId
                                     from view_VB_StudentLessonHeLu helu
-                                         inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 
+                                         inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 and lessonroom.assignClassroomStatus!=1 
                                     where nTutorType=1--授课类型
                                     and nAudit=0--未核录
                                     and nStatus!=3--非缺勤记录
@@ -88,7 +88,7 @@ namespace D_3.DataSource
 					                ,lessonroom.onClassCampusCode,lessonroom.onClassVenueId 
 					                from 
 					                view_VB_StudentLessonHeLu helu 
-					                inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1
+					                inner join V_BS_StudentLessonClassroom lessonroom on helu.id=lessonroom.lessonId and lessonroom.isOccupyClassroom=1 and lessonroom.assignClassroomStatus!=1
 					                inner join V_BS_Class cls on helu.sClasscode=cls.sCode and cls.fullClass=1
 					                where helu.nTutorType !=1
 							                and helu.nAudit=0--未核录
@@ -112,11 +112,10 @@ namespace D_3.DataSource
                 {
                     sqlAppend += " and helu.sClasscode not in @exceptcourseArrangingIds";
                 }
-                if (!string.IsNullOrEmpty(sqlAppend))
-                {
-                    sql1v1 += sqlAppend;
-                    sqlv2vGroup = string.Format(sqlv2vGroup, sqlAppend);
-                }
+
+                sql1v1 += sqlAppend;
+                sqlv2vGroup = string.Format(sqlv2vGroup, sqlAppend);
+
                 var paramObj = new { dtDateReal = date, onClassCampusCode = campusCode, onClassVenueId = venueId, exceptcourseArrangingIds = exceptcourseArrangingIds };
                 var courseArrangement1v1 = conn.Query<CourseArrangementEntity>(sql1v1, param: paramObj, commandTimeout: 10);
                 var courseArrangementv2vGroup = conn.Query<CourseArrangementEntity>(sqlv2vGroup, param: paramObj, commandTimeout: 10);
@@ -157,16 +156,17 @@ namespace D_3.DataSource
         /// 保存D-3 排班数据
         /// </summary>
         /// <param name="d3DbResultModel"></param>
-        public async Task D3ToDb(ClassroomArrangeResultModel d3DbResultModel)
+        public async Task<int> D3ToDb(ClassroomArrangeResultModel d3DbResultModel)
         {
+            int executeCount = 0;
             using (var conn = Conn.getConn(Conn.getConnStr()))
             {
                 SqlTransaction trans = conn.BeginTransaction();
                 try
                 {
                     //保存排教室结果
-                    await conn.ExecuteAsync(@"insert into V_BS_D3ClassroomArrangement(
-                        courseArrangingId
+                    executeCount = await conn.ExecuteAsync(@"insert into V_BS_D3ClassroomArrangement(
+                        sClasscode
                         ,campusCode
                         ,venueId
                         ,roomId
@@ -176,10 +176,9 @@ namespace D_3.DataSource
                         ,dtDateRealDay
                         ,dtLessonBeginReal
                         ,dtLessonEndReal
-                        ,courseId
                         ,isDelete)
                         values(
-                        @courseArrangingId
+                        @sClasscode
                         ,@campusCode
                         ,@venueId
                         ,@roomId
@@ -189,7 +188,6 @@ namespace D_3.DataSource
                         ,@dtDateRealDay
                         ,@dtLessonBeginReal
                         ,@dtLessonEndReal
-                        ,@courseId
                         ,0)", param: d3DbResultModel.ClassroomArrangements, transaction: trans);
                     //回写学员课时核录
                     foreach (var classroomArrangement in d3DbResultModel.ClassroomArrangements)
@@ -198,8 +196,17 @@ namespace D_3.DataSource
                         update V_BS_StudentLessonClassroom 
                                 set assignClassroomStatus=1,
                                     assignClassroomId=@assignClassroomId
-                                where lessonId=@lessonId
-                        ", param: new { assignClassroomId = classroomArrangement.roomId, lessonId = classroomArrangement.sClasscode }, transaction: trans);
+                                where classCode=@sClasscode
+                        ", param: new { assignClassroomId = classroomArrangement.roomId, sClasscode = classroomArrangement.sClasscode }, transaction: trans);
+                    }
+                    //todu 会写课时核录扩展表
+                    foreach (var queue in d3DbResultModel.CourseArrangementQueue)
+                    {
+                        await conn.ExecuteAsync(@"
+                        update V_BS_StudentLessonClassroom 
+                                set assignClassroomStatus=2
+                                where classCode=@sClasscode
+                        ", param: new {   sClasscode = queue.sClasscode }, transaction: trans);
                     }
                     trans.Commit();
                 }
@@ -214,37 +221,19 @@ namespace D_3.DataSource
                     {
                         conn.Close();
                     }
-
                 }
-                #region 保存待定表  （暂不维护了）
-                //
-                //conn.ExecuteAsync(@"insert into [V_BS_D3CourseArrangementQueue](
-                //                   queueIndex
-                //                  ,courseArrangingId
-                //                  ,onClassCampusCode
-                //                  ,onClassVenueId
-                //                  ,dtLessonBeginReal
-                //                  ,dtLessonEndReal
-                //                  ,teachType
-                //                  ,dtPKDateTime
-                //                    ,isDelete)
-                //                    values(
-                //                   @queueIndex
-                //                  ,@courseArrangingId
-                //                  ,@onClassCampusCode
-                //                  ,@onClassVenueId
-                //                  ,@dtLessonBeginReal
-                //                  ,@dtLessonEndReal
-                //                  ,@teachType
-                //                  ,@dtPKDateTime
-                //                    ,0
-                //                    )",
-                //    param: d3DbResultModel.CourseArrangementQueue, transaction: trans);
-
-                #endregion
-                //保存排班日志
-                await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedClassroom](
-                                 [courseArrangingId]
+            }
+            if (executeCount == 0)
+            {
+                return 0;
+            }
+            using (var conn = Conn.getConn(Conn.getConnStr()))
+            {
+                try
+                {
+                    //保存排班日志
+                    await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedClassroom](
+                                 [sClasscode]
                                 ,[isSuccess]
                                 ,[message]
                                 ,[sortIndex]
@@ -256,7 +245,7 @@ namespace D_3.DataSource
                                 ,[venueId]  
                                 )
                                 values(
-                                 @courseArrangingId
+                                 @sClasscode
                                 ,@isSuccess
                                 ,@message
                                 ,@sortIndex
@@ -267,13 +256,12 @@ namespace D_3.DataSource
                                 ,@campusCode
                                 ,@venueId    
                                     )",
-                        param: d3DbResultModel.LogSortedClassroomEntities);
-                //保存排课日志
-                await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedCourseArrangement](
+                            param: d3DbResultModel.LogSortedClassroomEntities);
+                    //保存排课日志
+                    await conn.ExecuteAsync(@"insert into [V_BS_D3LogSortedCourseArrangement](
                                    [CourseArrangementType]
                                   ,[SerialLevel]
-                                  ,[EarliestMergeDate]
-                                  ,[id]
+                                  ,[EarliestMergeDate] 
                                   ,[onClassCampusCode]
                                   ,[onClassVenueId]
                                   ,[sTeacherCode]
@@ -284,8 +272,7 @@ namespace D_3.DataSource
                                 values(
                                    @CourseArrangementType
                                   ,@SerialLevel
-                                  ,@EarliestMergeDate
-                                  ,@courseArrangingId
+                                  ,@EarliestMergeDate 
                                   ,@onClassCampusCode
                                   ,@onClassVenueId
                                   ,@sTeacherCode
@@ -294,7 +281,20 @@ namespace D_3.DataSource
                                   ,@nTutorType
                                   ,@dtPKDateTime     
                                     )",
-                    param: d3DbResultModel.LogSortedCourseArrangement);
+                        param: d3DbResultModel.LogSortedCourseArrangement);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                finally
+                {
+                    if (conn.State != System.Data.ConnectionState.Closed)
+                    {
+                        conn.Close();
+                    }
+                }
+                return executeCount;
             }
         }
 
@@ -345,10 +345,11 @@ namespace D_3.DataSource
                 var trans = conn.BeginTransaction();
                 //释放教室
                 string sql = "update V_BS_D3ClassroomArrangement set isDelete=1,deleteReason=@deleteReason where id in @ids";
-                conn.Execute(sql, transaction: trans, param: new { deleteReason = deleteReason, ids = arrangements.Select(p => p.id).ToArray() }, commandTimeout: 10);
+                conn.Execute(sql, transaction: trans, param: new { deleteReason = deleteReason, ids = arrangements.Select(p => p.id).ToArray() });
                 //修改课节教室扩展表
-                sql = "update V_BS_StudentLessonClassroom set assignClassroomStatus=0,assignClassroomId=0 where lessonId in @ids  ";
-                conn.Execute(sql, transaction: trans, param: new { ids = arrangements.Select(p => p.id).ToArray() }, commandTimeout: 10);
+                sql = "update V_BS_StudentLessonClassroom set assignClassroomStatus=2,assignClassroomId=0 where lessonId in @ids  ";
+                conn.Execute(sql, transaction: trans, param: new { ids = arrangements.Select(p => p.id).ToArray() });
+                trans.Commit();
             }
             return arrangements;
         }

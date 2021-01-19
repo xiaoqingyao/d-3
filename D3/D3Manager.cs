@@ -35,21 +35,21 @@ namespace D3
                 var classroomArrangeData = new ClassroomArrangeParameterModel(DateTime.Parse(strArrangeDate), courses, classrooms, occupiedClassroomArrangement);
 
                 //课程排序
-                var sortedCourseArrangement = new CourseArranger().Arrange(classroomArrangeData.CourseArrangementsEntities); 
+                var sortedCourseArrangement = new CourseArranger().Arrange(classroomArrangeData.CourseArrangementsEntities);
                 //排班
                 List<CourseArrangementQueueEntity> courseArrangementQueue = null;//待定排课记录
                 List<LogSortedClassroomEntity> logSortedClassroomEntities = null;//教室排序日志
                 var classroomArrangeResult = new ClassroomArranger(classroomArrangeData.ArrangeDate, sortedCourseArrangement, classroomArrangeData.ClassroomsEntities, classroomArrangeData.OccupiedClassroomArrangementEntities).Arrange(out courseArrangementQueue, out logSortedClassroomEntities);
                 //入库
                 var d3arrangeRel = new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangeResult, courseArrangementQueue, logSortedClassroomEntities);
-                await dataManager.D3ToDb(d3arrangeRel);
+                var executeCount = await dataManager.D3ToDb(d3arrangeRel);
+                return executeCount > 0;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return false;
             }
-            return true;
         }
         /// <summary>
         /// D-3内计算
@@ -60,7 +60,7 @@ namespace D3
         /// <param name="month"></param>
         /// <param name="day"></param>
         /// <returns></returns>
-        public async static Task WithinD3(string campusCode, string venueId, int year, int month, int day)
+        public async static Task<bool> WithinD3(string campusCode, string venueId, int year, int month, int day)
         {
             //已排教室表
             var occupiedArrangement = new DataManager().GetClassroomArrangement(year, month, day, campusCode, venueId);
@@ -78,8 +78,8 @@ namespace D3
             var classroomArrangement = new ClassroomArranger(DateTime.Parse($"{year}-{month}-{day}"), sortedCourseArrangement, classrooms, occupiedArrangement).Arrange(out courseQueue, out sortedClassroomEntitie);
 
             //更新数据库
-            await new DataManager().D3ToDb(new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangement, courseQueue, sortedClassroomEntitie));
-
+            var executeCount = await new DataManager().D3ToDb(new ClassroomArrangeResultModel(sortedCourseArrangement, classroomArrangement, courseQueue, sortedClassroomEntitie));
+            return executeCount > 0;
         }
         /// <summary>
         /// 释放已排班的排课
@@ -87,8 +87,10 @@ namespace D3
         /// <param name="roomId">教室id</param>
         /// <param name="courseArrangementId">排课id</param>
         /// <param name="deleteReson">原因</param>
-        public async static Task FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
+        public async static Task<bool> FreeClassroomArrangement(int? roomId, int? courseArrangementId, string deleteReson)
         {
+            //todo添加d-3日志表 过滤无效的d-3内规则
+            //todo添加释放逻辑判断，针对1-1之外的，如果还存在课，就不释放教室
             //释放并返回释放的排班顺序
             var classroomArrangement = new DataManager().FreeClassroomArrangement(roomId, courseArrangementId, deleteReson);
 
@@ -103,6 +105,7 @@ namespace D3
                     await WithinD3(whind3Item.campusCode, whind3Item.venueId, whind3Item.dtDateRealYear, whind3Item.dtDateRealMonth, whind3Item.dtDateRealDay);
                 }
             }
+            return classroomArrangement.Count() > 0;
         }
     }
 }

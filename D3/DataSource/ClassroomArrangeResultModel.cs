@@ -24,12 +24,11 @@ namespace D3.DataSource
         /// <param name="logSortedClassroomEntities">班级排班记录</param>
         public ClassroomArrangeResultModel(List<CourseArrangementEntity> sortedCourseArrangement, List<ClassroomArrangementEntity> classroomArrangements, List<CourseArrangementQueueEntity> courseArrangementQueue, List<LogSortedClassroomEntity> logSortedClassroomEntities)
         {
-            this.CourseArrangementQueue = courseArrangementQueue;
-            this.ClassroomArrangements = classroomArrangements;
-            this.LogSortedClassroomEntities = logSortedClassroomEntities;
+            
             if (sortedCourseArrangement == null || sortedCourseArrangement.Count == 0)
             {
-                throw new Exception("课程排序不能为空");
+                return;
+                //throw new Exception("课程排序不能为空");
             }
 
             int sortIndex = 0;
@@ -40,11 +39,14 @@ namespace D3.DataSource
                 sortCourseLog.sortIndex = sortIndex;
                 LogSortedCourseArrangement.Add(sortCourseLog);
             }
+            this.CourseArrangementQueue = courseArrangementQueue;
+            this.ClassroomArrangements = classroomArrangements;
+            this.LogSortedClassroomEntities = logSortedClassroomEntities;
         }
         /// <summary>
         /// 排班结果（教室监控）
         /// </summary>
-        public List<ClassroomArrangementEntity> ClassroomArrangements { get; set; }
+        public List<ClassroomArrangementEntity> ClassroomArrangements { get; set; } = new List<ClassroomArrangementEntity>();
         /// <summary>
         /// 待定表
         /// </summary>
