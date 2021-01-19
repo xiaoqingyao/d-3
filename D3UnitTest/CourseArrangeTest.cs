@@ -664,9 +664,7 @@ namespace D_3Tester
             Assert.AreEqual(classroomArrangements[0].sClasscode, "4");
         }
 
-
-        //todo d-3之内的，如果已排班的记录有出表，从待定表入
-        //todo d-3之内的，当日新增排课，先走d-3，没有的话再入待定表
+         
 
 
         public List<ClassroomArrangementEntity> arrange(ClassroomArrangeParameterModel testData, out List<CourseArrangementQueueEntity> courseArrangementNeedToDos)

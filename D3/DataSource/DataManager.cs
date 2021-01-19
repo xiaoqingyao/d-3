@@ -189,7 +189,7 @@ namespace D_3.DataSource
                         ,@dtLessonBeginReal
                         ,@dtLessonEndReal
                         ,0)", param: d3DbResultModel.ClassroomArrangements, transaction: trans);
-                    //回写学员课时核录
+                    //回写学员课时核录-成功
                     foreach (var classroomArrangement in d3DbResultModel.ClassroomArrangements)
                     {
                         await conn.ExecuteAsync(@"
@@ -200,7 +200,7 @@ namespace D_3.DataSource
 				                            where helu.sclasscode=@sClasscode  and helu.dtLessonBeginReal=@dtLessonBeginReal
                         ", param: new { assignClassroomId = classroomArrangement.roomId, sClasscode = classroomArrangement.sClasscode, dtLessonBeginReal = classroomArrangement.dtLessonBeginReal }, transaction: trans);
                     }
-                    //todu 会写课时核录扩展表
+                    //回写课时核录扩展表-待定
                     foreach (var queue in d3DbResultModel.CourseArrangementQueue)
                     {
                         await conn.ExecuteAsync(@"
@@ -343,6 +343,7 @@ namespace D_3.DataSource
             {
                 return arrangements;
             }
+            //todo添加释放逻辑判断，针对1-1之外的，如果还存在课，就不释放教室
             using (var conn = Conn.getConn(Conn.getConnStr()))
             {
                 var trans = conn.BeginTransaction();
@@ -350,7 +351,7 @@ namespace D_3.DataSource
                 string sql = "update V_BS_D3ClassroomArrangement set isDelete=1,deleteReason=@deleteReason where id in @ids";
                 conn.Execute(sql, transaction: trans, param: new { deleteReason = deleteReason, ids = arrangements.Select(p => p.id).ToArray() });
                 //修改课节教室扩展表
-                sql = "update V_BS_StudentLessonClassroom set assignClassroomStatus=2,assignClassroomId=0 where lessonId in @ids  ";
+                sql = "update V_BS_StudentLessonClassroom set assignClassroomStatus=0,assignClassroomId=0 where lessonId in @ids  ";
                 conn.Execute(sql, transaction: trans, param: new { ids = arrangements.Select(p => p.id).ToArray() });
                 trans.Commit();
             }
